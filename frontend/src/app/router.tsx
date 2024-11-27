@@ -5,6 +5,7 @@ import { MusicRoot, MusicRootErrorBoundary } from "./routes/music/root";
 import { MusicGenerate } from "./routes/music/generate";
 import { MusicLibrary } from "./routes/music/library";
 import { MusicBrowse } from "./routes/music/browse";
+import { MusicFavorites } from "./routes/music/favorites";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,11 @@ export const router = createBrowserRouter([
         path: "/music/browse",
         ErrorBoundary: MusicRootErrorBoundary,
         element: <MusicBrowse />
+      },
+      {
+        path: "/music/favorites",
+        ErrorBoundary: MusicRootErrorBoundary,
+        element: <MusicFavorites />
       },
     ]
   }

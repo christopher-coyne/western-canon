@@ -15,7 +15,7 @@ export const MusicRoot = () => {
                     </div>
                     <ul className='flex h-full border-2 border-white items-center gap-4'>
                         <li><Link to="./library">Library</Link></li>
-                        <li><Link to="./generate">Generate</Link></li>
+                        <li><Link to="./favorites">Favorites</Link></li>
                         <li><Link to="./browse">Browse</Link></li>
                     </ul>
                 </div>

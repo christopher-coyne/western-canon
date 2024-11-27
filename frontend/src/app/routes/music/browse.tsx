@@ -1,7 +1,8 @@
+import { BrowseMusicList } from "@/features/music/components/browse-music-list"
 
 
 export const MusicBrowse = () => {
-    return <div className="h-full w-full flex items-center justify-center">
-        music browse
+    return <div className="max-w-xl flex flex-col mx-auto">
+        <BrowseMusicList />
     </div>
 }
