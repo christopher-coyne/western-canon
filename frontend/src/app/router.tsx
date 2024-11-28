@@ -1,11 +1,13 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Homepage } from "./routes/homepage";
-import { Generate } from "./routes/generate/generate";
+import { Generate, GenerateRootErrorBoundary } from "./routes/generate/root";
 import { MusicRoot, MusicRootErrorBoundary } from "./routes/music/root";
 import { MusicGenerate } from "./routes/music/generate";
 import { MusicLibrary } from "./routes/music/library";
 import { MusicBrowse } from "./routes/music/browse";
 import { MusicFavorites } from "./routes/music/favorites";
+import { GenerateMusic } from "./routes/generate/music";
+import { GenerateAll } from "./routes/generate/all";
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +21,17 @@ export const router = createBrowserRouter([
   {
     path: "/generate",
     element: <Generate />,
+    ErrorBoundary: GenerateRootErrorBoundary,
+    children: [
+      {
+        path: "/generate/all",
+        element: <GenerateAll />,
+      },
+      {
+        path: "/generate/music",
+        element: <GenerateMusic />,
+      },
+    ]
   },
   {
     path: "/music",
