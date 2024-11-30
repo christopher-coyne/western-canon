@@ -6,6 +6,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -24,9 +25,16 @@ public class Recommendation {
     @Column(nullable = false) // For PostgreSQL, use 'json' or 'jsonb'
     private String[] songs;
 
+    @ManyToMany(mappedBy = "favoriteRecommendations")
+    private List<AppUser> users;
+
     @ManyToOne
     @JoinColumn(name = "recommendationGroup_id", nullable = false)
     private RecommendationGroup recommendationGroup;
+
+    @ManyToOne
+    @JoinColumn(name = "creator_id", nullable = false)
+    private AppUser creator;
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
@@ -39,21 +47,3 @@ public class Recommendation {
     private LocalDateTime deletedAt;
 
 }
-
-/*
-@Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false, unique = true)
-    private String username;
-
-    @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false, unique = true)
-    private String email;
-}
- */
