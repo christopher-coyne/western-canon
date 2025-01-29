@@ -1,13 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { MediaType, MusicRecommendation, Prisma } from "@prisma/client";
-import { PrismaService } from "../prisma/prisma.service";
+import { PrismaService } from '../prisma/prisma.service';
 
-/*
-  id          Int       @id @default(autoincrement())
-  mediaType   MediaType
-  description String
-  prompt      String
-  */
 @Injectable()
 export class RecommendationService {
     constructor(private prisma: PrismaService) { }
@@ -15,9 +9,14 @@ export class RecommendationService {
     async createRecommendation(params: {
         where: Prisma.UserWhereUniqueInput;
         data: Prisma.UserUpdateInput;
-    }): MusicRecommendation {
+    }): Promise<MusicRecommendation> {
         console.log('hey...')
         const newRec = this.prisma.musicRecommendation.create({ data: { mediaType: MediaType.MUSIC, description: 'test', prompt: 'test' } })
         return newRec
+    }
+
+    async getRecommendations(): Promise<MusicRecommendation[]> {
+        const allRecommendations = await this.prisma.musicRecommendation.findMany()
+        return allRecommendations
     }
 }
