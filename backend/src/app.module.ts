@@ -9,10 +9,11 @@ import { AuthService } from './auth/auth.service';
 import { UsersService } from './users/users.service';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './auth/local.strategy';
+import { SessionSerializer } from './auth/session.serializer';
 
 @Module({
   imports: [PassportModule],
   controllers: [AppController, RecommendationsController, AuthController],
-  providers: [AppService, PrismaService, RecommendationService, AuthService, UsersService, LocalStrategy],
+  providers: [AppService, PrismaService, RecommendationService, AuthService, UsersService, LocalStrategy, SessionSerializer],
 })
 export class AppModule {}

@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as session from 'express-session'
+import * as passport from 'passport';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,8 +18,32 @@ const documentFactory = () => SwaggerModule.createDocument(app, config);
 SwaggerModule.setup('api', app, documentFactory);
 
 
+app.use(
+  session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false, // Change to true in production (HTTPS)
+      sameSite: 'lax', // Adjust for cross-origin requests
+    },
+  }),
+);
+  // Initialize Passport and use session
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  app.enableCors({
+    origin: ['http://localhost:3000', 'http://localhost:5173'], // Add your frontend URLs
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
   await app.listen(process.env.PORT ?? 3000);
+
 }
+
 bootstrap();
 
 /*
