@@ -1,8 +1,9 @@
-import { Controller, Get, Injectable, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Injectable, Post, UseGuards } from "@nestjs/common";
 import { MusicRecommendation } from "@prisma/client";
 import { Result } from "src/domain/result";
 import { RecommendationsService } from "./recommendations.service";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
+import { CreateRecommendationDto } from "./DTO/create-recommendation.dto";
 
 @Controller('recommendations')
 @Injectable()
@@ -11,8 +12,8 @@ export class RecommendationsController {
 
       @UseGuards(AuthenticatedGuard)
     @Post('')
-    async createRecommendation(): Promise<Result<any>> {
-        return Result.ok(await this.recommendationsService.createRecommendation())
+    async createRecommendation(@Body() body: CreateRecommendationDto): Promise<Result<any>> {
+        return Result.ok(await this.recommendationsService.createRecommendation(body))
     }
 
     @Get('')
