@@ -8,6 +8,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
     const result = (await super.canActivate(context)) as boolean;
     console.log('result ', result)
     const request = context.switchToHttp().getRequest();
+    console.log('request ', request.user)
 
     // Complete the login process if authentication was successful
     await new Promise<void>((resolve, reject) => {

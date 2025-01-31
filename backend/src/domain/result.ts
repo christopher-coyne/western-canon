@@ -16,6 +16,7 @@ export class Result<T> {
   }
 
   static ok<U>(data: U, message?: string): Result<U> {
+    console.log('DATA OK ', data)
     return new Result(true, data, message);
   }
 
