@@ -13,9 +13,10 @@ import { SessionSerializer } from './auth/session.serializer';
 import { LlmService } from './llm/llm.service';
 import { LlmModule } from './llm/llm.module';
 import { OpenAiService } from './openai/openAi.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PassportModule],
+  imports: [PassportModule, ConfigModule.forRoot({isGlobal: true})], // providers or imports?
   controllers: [AppController, RecommendationsController, AuthController],
   providers: [AppService, PrismaService, RecommendationsService, AuthService, UsersService, LocalStrategy, SessionSerializer, LlmService, OpenAiService],
 })

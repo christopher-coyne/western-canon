@@ -10,6 +10,8 @@ export class RecommendationsService {
 
     async createRecommendation(recommendation: CreateRecommendationDto): Promise<MusicRecommendation> {
         console.log('creating recommendation... ', recommendation)
+        const songCategories = await this.llmService.getPlaylistCategories({prompt: recommendation.prompt, quantity: recommendation.playlistQuantity})
+        console.log('SONG CATEGORIES ', songCategories)
         const makeRec = await this.llmService.getPlaylist()
         const newRec = await this.prismaService.musicRecommendation.create({ data: { mediaType: MediaType.MUSIC, description: 'test', prompt: 'test' } })
         return makeRec
