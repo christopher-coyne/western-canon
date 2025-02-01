@@ -2,8 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { MediaType, MusicRecommendation, Prisma } from "@prisma/client";
 import { LlmCallerInterface } from "src/llm/llm-interface";
+import { zodResponseFormat } from "openai/helpers/zod";
 import OpenAI from 'openai';
 import { z } from "zod";
+import { MusicRecommendationCategory } from "./music-category.entity";
 
 @Injectable()
 export class OpenAiService implements LlmCallerInterface {
@@ -16,38 +18,51 @@ export class OpenAiService implements LlmCallerInterface {
           })
     }
 
-    async getPlaylist(): Promise<any> {
-        return {test: 'open ai'}
+    async generatePlaylist(category: MusicRecommendationCategory): Promise<any> {
+        const PlaylistReponse = z.object({
+            songs: z.array(z.object(
+                {name: z.string(), band: z.string()}
+            ))
+          });
+
+          const prompt = `Here is a music playlist category that i want you to provide a list of recommended songs for. category name: ${category.name}
+          category description: ${category.description}. List of songs that the user provided that form this category: (dont include these songs in your category : ${category.relatedSongs})
+          `
+
+          const chatCompletion: OpenAI.Chat.ChatCompletion = await this.client.chat.completions.create({
+            messages: [{ role: 'user', content: JSON.stringify(prompt) }],
+            model: 'gpt-4o-mini',
+            response_format: zodResponseFormat(PlaylistReponse, "playlist"),
+          });
+          
+          console.log('generated songs ', chatCompletion.choices[0].message.content)
+          return JSON.parse(chatCompletion.choices[0].message.content ?? '{songs: []}').songs
     }
 
-    async makeCall(prompt: any): Promise<OpenAI.Chat.ChatCompletion> {
+    async makeCall(prompt: string): Promise<OpenAI.Chat.ChatCompletion> {
         console.log('GETTING CATEGORIES WITH PROMPT ', prompt)
         const CategoryResponse = z.object({
-            name: z.string(),
+            categories: z.array(z.object({name: z.string(),
             description: z.string(),
-            relatedSongs: z.array(z.string()),
+            relatedSongs: z.array(z.string())},))
           });
           
 
         // {"name": "sub category name", "relatedSongs": "the songs in the list that are related to this", "description": "subcategory description"}
         const chatCompletion: OpenAI.Chat.ChatCompletion = await this.client.chat.completions.create({
             messages: [{ role: 'user', content: JSON.stringify(prompt) }],
-            model: 'gpt-4o-2024-08-06',
-            response_format: { type: "json_object" }
+            model: 'gpt-4o-mini',
+            response_format: zodResponseFormat(CategoryResponse, "category"),
           });
 
           return chatCompletion
     }
 
-    async getCategories(prompt, quantity): Promise<any> {
-        const constructedPrompt = `Here is a list of songs. Provide for me a list of ${quantity} musical sub categories, based on these songs. for each subcategory provide it in this format as JSON: [{"name": "sub category name", "relatedSongs": "the songs in the list that are related to this", "description": "subcategory description"}, ...] ${JSON.stringify(prompt)}`
+    async generatePlaylistCategories(prompt, quantity): Promise<MusicRecommendationCategory[]> {
+        const constructedPrompt = `Here is a list of songs. Provide for me a list of ${quantity} musical sub categories, based on these songs. ${JSON.stringify(prompt)}`
         const categories = await this.makeCall(constructedPrompt)
 
         console.log('CHAT COMPLETION ', categories.choices[0].message.content)
-        return categories.choices[0].message.content
+        return JSON.parse(categories.choices[0].message.content ?? '{categories: []}').categories
     }
-}
-
-function zodResponseFormat(CalendarEvent: any, arg1: string) {
-    throw new Error("Function not implemented.");
 }

@@ -9,12 +9,19 @@ export class RecommendationsService {
     constructor(private prismaService: PrismaService, private llmService: LlmService) { }
 
     async createRecommendation(recommendation: CreateRecommendationDto): Promise<MusicRecommendation> {
-        console.log('creating recommendation... ', recommendation)
-        const songCategories = await this.llmService.getPlaylistCategories({prompt: recommendation.prompt, quantity: recommendation.playlistQuantity})
-        console.log('SONG CATEGORIES ', songCategories)
-        const makeRec = await this.llmService.getPlaylist()
+        const playlistCategories = await this.llmService.generatePlaylistCategories({prompt: recommendation.prompt, quantity: recommendation.playlistQuantity})
+
+        // now that we have categories - generate playlists
+        const playlistsPromises: Promise<any>[] = []
+        for (const category of playlistCategories) {
+            playlistsPromises.push(this.llmService.generatePlaylist(category))
+        }
+
+        const createdPlaylists = await Promise.all(playlistsPromises)
+        console.log('CREATED PLAYLISTS ', createdPlaylists)
+
         const newRec = await this.prismaService.musicRecommendation.create({ data: { mediaType: MediaType.MUSIC, description: 'test', prompt: 'test' } })
-        return makeRec
+        return newRec
     }
 
     async getRecommendations(): Promise<MusicRecommendation[]> {
