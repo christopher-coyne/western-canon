@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { SongListItemDto } from './song-list-item.dto';
 
 export class CreateRecommendationDto {
 @ApiProperty()
@@ -11,7 +12,5 @@ export class CreateRecommendationDto {
   playlistQuantity: number;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  prompt: string;
+  prompt: SongListItemDto[];
 }

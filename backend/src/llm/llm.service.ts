@@ -13,7 +13,7 @@ export class LlmService {
         return openAiResponse
     }
 
-    async getPlaylistCategories({prompt, quantity}: {prompt: string, quantity: number}) {
+    async getPlaylistCategories({prompt, quantity}: {prompt: {band: string, title: string}[], quantity: number}) {
         const categories = await this.openAiService.getCategories(prompt, quantity)
         return categories
     }

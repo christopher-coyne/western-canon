@@ -1,5 +1,7 @@
+import { SongListItemDto } from "src/recommendations/DTO/song-list-item.dto"
+
 export interface LlmCallerInterface {
     getPlaylist: () => any
-    getCategories: (prompt: string, quantity: number) => any
-    makeCall: (prompt: string) => any
+    getCategories: (prompt: SongListItemDto, quantity: number) => any
+    makeCall: (prompt: SongListItemDto) => any
 }
