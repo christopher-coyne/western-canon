@@ -38,11 +38,12 @@ model User {
   deletedAt DateTime?
 }
 
-model MusicRecommendation {
-  id          Int       @id @default(autoincrement())
+model PlaylistCollection {
+  id          Int             @id @default(autoincrement())
   mediaType   MediaType
   description String
   prompt      String
+  playlists   MusicPlaylist[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -50,11 +51,13 @@ model MusicRecommendation {
 }
 
 model MusicPlaylist {
-  id          Int    @id @default(autoincrement())
-  name        String
-  description String
+  id                    Int    @id @default(autoincrement())
+  name                  String
+  description           String
+  musicRecommendationId Int
 
-  songs Song[]
+  musicRecommendation PlaylistCollection @relation(fields: [musicRecommendationId], references: [id])
+  songs               Song[]
 }
 
 model Song {
@@ -62,7 +65,6 @@ model Song {
   name            String
   length          Float
   band            String
-  summary         String
   musicPlaylistId Int
 
   musicPlaylist MusicPlaylist @relation(fields: [musicPlaylistId], references: [id])

@@ -1,11 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { MediaType, MusicRecommendation, Prisma } from "@prisma/client";
 import { LlmCallerInterface } from "src/llm/llm-interface";
 import { zodResponseFormat } from "openai/helpers/zod";
 import OpenAI from 'openai';
 import { z } from "zod";
-import { MusicRecommendationCategory } from "./music-category.entity";
+import { Playlist } from "./playlist";
 
 @Injectable()
 export class OpenAiService implements LlmCallerInterface {
@@ -18,7 +17,7 @@ export class OpenAiService implements LlmCallerInterface {
           })
     }
 
-    async generatePlaylist(category: MusicRecommendationCategory): Promise<any> {
+    async generatePlaylistSongs(category: Playlist): Promise<any> {
         const PlaylistReponse = z.object({
             songs: z.array(z.object(
                 {name: z.string(), band: z.string()}
@@ -34,7 +33,7 @@ export class OpenAiService implements LlmCallerInterface {
             model: 'gpt-4o-mini',
             response_format: zodResponseFormat(PlaylistReponse, "playlist"),
           });
-          
+
           console.log('generated songs ', chatCompletion.choices[0].message.content)
           return JSON.parse(chatCompletion.choices[0].message.content ?? '{songs: []}').songs
     }
@@ -58,7 +57,7 @@ export class OpenAiService implements LlmCallerInterface {
           return chatCompletion
     }
 
-    async generatePlaylistCategories(prompt, quantity): Promise<MusicRecommendationCategory[]> {
+    async generatePlaylists(prompt, quantity): Promise<Playlist[]> {
         const constructedPrompt = `Here is a list of songs. Provide for me a list of ${quantity} musical sub categories, based on these songs. ${JSON.stringify(prompt)}`
         const categories = await this.makeCall(constructedPrompt)
 

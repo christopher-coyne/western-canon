@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class MusicRecommendationCategory {
+export class Playlist {
 
 @IsNumber()
-  name: number;
+  name: string;
 
 
 @IsNumber()
-  description: number;
+  description: string;
 
   relatedSongs: string[];
 }

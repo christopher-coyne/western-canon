@@ -1,8 +1,8 @@
-import { MusicRecommendationCategory } from "src/openai/music-category.entity"
+import { Playlist } from "src/openai/playlist"
 import { SongListItemDto } from "src/recommendations/DTO/song-list-item.dto"
 
 export interface LlmCallerInterface {
-    generatePlaylist: (category: MusicRecommendationCategory) => any
-    generatePlaylistCategories: (prompt: SongListItemDto, quantity: number) => Promise<MusicRecommendationCategory[]>
+    generatePlaylistSongs: (category: Playlist) => any
+    generatePlaylists: (prompt: SongListItemDto, quantity: number) => Promise<Playlist[]>
     makeCall: (prompt: string) => any
 }

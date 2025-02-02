@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Injectable, Post, UseGuards } from "@nestjs/common";
-import { MusicRecommendation } from "@prisma/client";
+import { MusicPlaylist, PlaylistCollection } from "@prisma/client";
 import { Result } from "src/domain/result";
 import { RecommendationsService } from "./recommendations.service";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
@@ -17,7 +17,7 @@ export class RecommendationsController {
     }
 
     @Get('')
-    async getRecommendations(): Promise<Result<MusicRecommendation[]>> {
+    async getRecommendations(): Promise<Result<PlaylistCollection[]>> {
         const recommendations = await this.recommendationsService.getRecommendations()
         return Result.ok(recommendations)
     }
