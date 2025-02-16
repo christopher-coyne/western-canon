@@ -25,7 +25,7 @@ export const GenerateMusicForm = () => {
     const form = useForm()
 
     function onSubmit(data: any) {
-        console.log('here...')
+        console.log('here...' , data)
     }
     return (<Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -60,9 +60,9 @@ export const GenerateMusicForm = () => {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="m@example.com">m@example.com</SelectItem>
-                                <SelectItem value="m@google.com">m@google.com</SelectItem>
-                                <SelectItem value="m@support.com">m@support.com</SelectItem>
+                                <SelectItem value="5">5</SelectItem>
+                                <SelectItem value="10">10</SelectItem>
+                                <SelectItem value="20">20</SelectItem>
                             </SelectContent>
                         </Select>
                     </FormItem>

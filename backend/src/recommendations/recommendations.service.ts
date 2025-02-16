@@ -3,10 +3,11 @@ import { MediaType, PlaylistCollection, Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateRecommendationDto } from "./DTO/create-recommendation.dto";
 import { LlmService } from "src/llm/llm.service";
+import { SpotifyService } from "src/spotify/spotify.service";
 
 @Injectable()
 export class RecommendationsService {
-    constructor(private prismaService: PrismaService, private llmService: LlmService) { }
+    constructor(private prismaService: PrismaService, private llmService: LlmService, private spotifyService: SpotifyService) { }
 
     async createRecommendation(recommendation: CreateRecommendationDto): Promise<PlaylistCollection> {
         const playlistSets = await this.llmService.generatePlaylistCategories({prompt: recommendation.prompt, quantity: recommendation.playlistQuantity})
@@ -23,6 +24,10 @@ export class RecommendationsService {
 
         // create music recommendation
         const newRec = await this.prismaService.playlistCollection.create({ data: { mediaType: MediaType.MUSIC, description: 'test', prompt: 'test' } })
+
+        // TEST spotify searching
+        const spotifySearch = await this.spotifyService.searchTracks('black flag', 'my war')
+        console.log('spotify search ', spotifySearch)
 
         // create playlists with songs
         for (let idx = 0; idx < createdPlaylists.length; idx++) {

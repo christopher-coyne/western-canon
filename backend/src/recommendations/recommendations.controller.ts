@@ -12,12 +12,18 @@ export class RecommendationsController {
 
       @UseGuards(AuthenticatedGuard)
     @Post('')
-    async createRecommendation(@Body() body: CreateRecommendationDto): Promise<Result<any>> {
+    async createRecommendation(@Body() body: CreateRecommendationDto): Promise<Result<PlaylistCollection>> {
         return Result.ok(await this.recommendationsService.createRecommendation(body))
     }
 
     @Get('')
     async getRecommendations(): Promise<Result<PlaylistCollection[]>> {
+        const recommendations = await this.recommendationsService.getRecommendations()
+        return Result.ok(recommendations)
+    }
+
+    @Get('/:id')
+    async getRecommendation(): Promise<Result<PlaylistCollection[]>> {
         const recommendations = await this.recommendationsService.getRecommendations()
         return Result.ok(recommendations)
     }
