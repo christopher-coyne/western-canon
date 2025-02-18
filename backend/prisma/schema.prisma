@@ -26,12 +26,13 @@ enum Role {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  password String?
-  name     String?
-  credits  Float
-  role     Role
+  id                  Int                  @id @default(autoincrement())
+  email               String               @unique
+  password            String?
+  name                String?
+  credits             Float
+  playlistCollections PlaylistCollection[]
+  role                Role
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -44,7 +45,9 @@ model PlaylistCollection {
   description String
   prompt      String
   playlists   MusicPlaylist[]
+  creatorId   Int
 
+  creator   User      @relation(fields: [creatorId], references: [id])
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?

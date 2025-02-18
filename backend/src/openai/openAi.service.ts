@@ -17,6 +17,15 @@ export class OpenAiService implements LlmCallerInterface {
           })
     }
 
+    async generateResponse(prompt: string, validator: any, validatorName: string): Promise<string> {
+        const chatCompletion: OpenAI.Chat.ChatCompletion = await this.client.chat.completions.create({
+            messages: [{ role: 'user', content: JSON.stringify(prompt) }],
+            model: 'gpt-4o-mini',
+            response_format: zodResponseFormat(validator, validatorName),
+          });
+          return chatCompletion.choices[0].message.content ?? ''
+    }
+
     async generatePlaylistSongs(category: Playlist): Promise<any> {
         const PlaylistReponse = z.object({
             songs: z.array(z.object(

@@ -10,7 +10,7 @@ import { CreateRecommendationDto } from "./DTO/create-recommendation.dto";
 export class RecommendationsController {
     constructor(private recommendationsService: RecommendationsService) {}
 
-      @UseGuards(AuthenticatedGuard)
+    @UseGuards(AuthenticatedGuard)
     @Post('')
     async createRecommendation(@Body() body: CreateRecommendationDto): Promise<Result<PlaylistCollection>> {
         return Result.ok(await this.recommendationsService.createRecommendation(body))

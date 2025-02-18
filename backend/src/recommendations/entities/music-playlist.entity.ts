@@ -4,13 +4,6 @@ import { SongListItemDto } from '../DTO/song-list-item.dto';
 import { Type } from 'class-transformer';
 import { SongEntity } from './song.entity';
 
-/*
-  id          Int             @id @default(autoincrement())
-  mediaType   MediaType
-  description String
-  prompt      String
-  playlists   MusicPlaylist[]
-  */
 export class MusicPlaylistEntity {
 
     @IsNumber()
