@@ -35,7 +35,7 @@ export class RecommendationsService {
                 data: {
                     name: playlistSets[idx].name,
                     description: playlistSets[idx].description,
-                    musicRecommendationId: newRec.id,
+                    playlistCollectionId: newRec.id,
                     songs: {
                         create: createdPlaylists[idx].map(song => ({
                             name: song.name,

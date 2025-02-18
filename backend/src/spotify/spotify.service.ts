@@ -11,17 +11,10 @@ export class SpotifyService {
             this.configService.get('SPOTIFY_CLIENT_ID') ?? '',
             this.configService.get('SPOTIFY_CLIENT_SECRET') ?? ''
         );
-        /*
-        this.spotifyApi = new SpotifyApi(
-          this.configService.get('SPOTIFY_CLIENT_ID') ?? '',
-          this.configService.get('SPOTIFY_CLIENT_SECRET') ?? '',
-        );
-        */
       }
 
     async searchTracks(artist: string, trackName: string) {
-    const searchResponse = await this.spotifyApi.search('track:black coffee artist:black flag', ['track'])
-    console.log('search response ', searchResponse.tracks.items.length ? searchResponse.tracks.items[0] : null)
-    // return response.body.tracks.items;
+    const searchResponse = await this.spotifyApi.search(`track:${trackName} artist:${artist}`, ['track'])
+    return searchResponse.tracks.items.length ? searchResponse.tracks.items[0] : undefined
   }
 }

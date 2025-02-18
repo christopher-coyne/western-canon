@@ -51,21 +51,25 @@ model PlaylistCollection {
 }
 
 model MusicPlaylist {
-  id                    Int    @id @default(autoincrement())
-  name                  String
-  description           String
-  musicRecommendationId Int
+  id                   Int    @id @default(autoincrement())
+  name                 String
+  description          String
+  playlistCollectionId Int
 
-  musicRecommendation PlaylistCollection @relation(fields: [musicRecommendationId], references: [id])
-  songs               Song[]
+  playlistCollection PlaylistCollection @relation(fields: [playlistCollectionId], references: [id])
+  songs              Song[]
 }
 
 model Song {
   id              Int    @id @default(autoincrement())
-  name            String
-  length          Float
-  band            String
+  input           String
   musicPlaylistId Int
+  spotifyId       String
+  /**
+   * length          Float
+   * band            String
+   * datePublished   DateTime
+   */
 
   musicPlaylist MusicPlaylist @relation(fields: [musicPlaylistId], references: [id])
 }
