@@ -4,9 +4,9 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { CreateRecommendationDto } from "./DTO/create-recommendation.dto";
 import { LlmService } from "src/llm/llm.service";
 import { SpotifyService } from "src/spotify/spotify.service";
-import { Playlist } from "src/openai/playlist";
+import { Playlist } from "./DTO/llm-playlist.dto";
 import { z } from "zod";
-import { parse } from "path";
+import { Track } from "@spotify/web-api-ts-sdk";
 
 @Injectable()
 export class RecommendationsService {
@@ -50,46 +50,52 @@ export class RecommendationsService {
 
     async createRecommendation(data: CreateRecommendationDto): Promise<PlaylistCollection> {
         const playlistSets = await this.generatePlaylistCategories(data)
-        console.log('playlist sets ', playlistSets)
 
         const createdPlaylists = await this.generatePlaylistSongs(playlistSets.playlistCategories)
-        console.log('created Playlists ', createdPlaylists)
-        for (const playlist of createdPlaylists) {
-            console.log('songs: ', playlist.songs)
-        }
-
-        return {
-            description: 'abc',
-            id: 1,
-            mediaType: MediaType.MUSIC,
-            prompt: 'test prompt'
-        } as PlaylistCollection
-
 
         // create music recommendation
         const newRec = await this.prismaService.playlistCollection.create({ data: { mediaType: MediaType.MUSIC, description: 'test', prompt: 'test' } })
 
-        // TEST spotify searching
+        console.log('playlist sets ', playlistSets)
+        console.log('created playlists ', createdPlaylists)
+
+        // Match songs in the created Playlists with spotify records
+        // TODO - in future, probably want to match this with other music platforms as well
+        /*
+        const spotifyResponsePromises: any = []
+        for (const playlist of createdPlaylists) {
+            const playlistSpotifyResponses: Promise<Track | undefined>[] = []
+            for (const song of playlist.songs) {
+                playlistSpotifyResponses.push(this.spotifyService.searchTracks(song.band, song.name))
+            }
+            spotifyResponses.push(playlistSpotifyResponses)
+        }
+
+        const allSpotify
+        */
+
+        /*
         const spotifySearch = await this.spotifyService.searchTracks('black flag', 'my war')
         console.log('spotify search ', spotifySearch)
+        */
 
         // create playlists with songs
         /*
-          input           String
+          id              Int    @id @default(autoincrement())
+  input           String
   musicPlaylistId Int
   spotifyId       String
   */
- /*
         for (let idx = 0; idx < createdPlaylists.length; idx++) {
             await this.prismaService.musicPlaylist.create({
                 data: {
-                    name: playlistSets[idx].name,
-                    description: playlistSets[idx].description,
+                    name: playlistSets.playlistCategories[idx].name,
+                    description: playlistSets.playlistCategories[idx].description,
                     playlistCollectionId: newRec.id,
                     songs: {
-                        create: createdPlaylists[idx].map(song => ({
-                            length: 1,
-                            band: song.band,
+                        create: createdPlaylists[idx].songs.map(song => ({
+                            input: `${song.name} ${song.band}`,
+                            spotifyId: 'test spotify input'
                         }))
                     }
                 }
@@ -97,7 +103,6 @@ export class RecommendationsService {
         }
 
         return newRec
-        */
     }
 
     async getRecommendations(): Promise<PlaylistCollection[]> {
