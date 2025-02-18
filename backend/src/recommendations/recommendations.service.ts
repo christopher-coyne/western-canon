@@ -55,6 +55,7 @@ export class RecommendationsService {
         const createdPlaylists = await this.generatePlaylistSongs(playlistSets.playlistCategories)
 
         // create music recommendation
+        console.log('CREATOR ID ', String(creatorId))
         const newRec = await this.prismaService.playlistCollection.create({ data: { mediaType: MediaType.MUSIC, description: 'test', prompt: 'test', creatorId: creatorId} })
 
         console.log('playlist sets ', playlistSets)

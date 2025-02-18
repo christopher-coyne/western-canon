@@ -11,6 +11,6 @@ export class SessionSerializer extends PassportSerializer {
   deserializeUser(userId: any, done: (err: any, user?: any) => void): void {
     console.log('DESERIALIZING USER:', userId);
     // Retrieve user from database or mock
-    done(null, { id: userId, username: 'james williams', email: "james@gmail.com" });
+    done(null, { id: String(userId), username: 'james williams', email: "james@gmail.com" });
   }
 }
