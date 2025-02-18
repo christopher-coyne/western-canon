@@ -1,9 +1,12 @@
-import { Body, Controller, Get, Injectable, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Injectable, Param, ParseIntPipe, Post, Req, UseGuards } from "@nestjs/common";
 import { MusicPlaylist, PlaylistCollection } from "@prisma/client";
 import { Result } from "src/domain/result";
 import { RecommendationsService } from "./recommendations.service";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { CreateRecommendationDto } from "./DTO/create-recommendation.dto";
+import { MusicPlaylistEntity } from "./entities/music-playlist.entity";
+import { Playlist } from "./DTO/llm-playlist.dto";
+import { PlaylistCollectionEntity } from "./entities/playlist-collection.entity";
 
 @Controller('recommendations')
 @Injectable()
@@ -12,19 +15,14 @@ export class RecommendationsController {
 
     @UseGuards(AuthenticatedGuard)
     @Post('')
-    async createRecommendation(@Body() body: CreateRecommendationDto): Promise<Result<PlaylistCollection>> {
-        return Result.ok(await this.recommendationsService.createRecommendation(body))
+    async createRecommendation(@Req() req, @Body() body: CreateRecommendationDto): Promise<Result<PlaylistCollection>> {
+        const userId = req.user.id
+        console.log('user id ', userId)
+        return Result.ok(await this.recommendationsService.createRecommendation(userId, body))
     }
 
-    @Get('')
-    async getRecommendations(): Promise<Result<PlaylistCollection[]>> {
-        const recommendations = await this.recommendationsService.getRecommendations()
-        return Result.ok(recommendations)
-    }
-
-    @Get('/:id')
-    async getRecommendation(): Promise<Result<PlaylistCollection[]>> {
-        const recommendations = await this.recommendationsService.getRecommendations()
-        return Result.ok(recommendations)
+    @Get('/playlist-collection/:id')
+    async getPlaylistCollection(@Param('id') id: string): Promise<Result<PlaylistCollectionEntity>> {
+        return Result.ok(await this.recommendationsService.getPlaylistCollectionById(id))
     }
 }

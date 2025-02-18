@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { MediaType, PlaylistCollection, Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateRecommendationDto } from "./DTO/create-recommendation.dto";
@@ -6,7 +6,8 @@ import { LlmService } from "src/llm/llm.service";
 import { SpotifyService } from "src/spotify/spotify.service";
 import { Playlist } from "./DTO/llm-playlist.dto";
 import { z } from "zod";
-import { Track } from "@spotify/web-api-ts-sdk";
+import { MusicPlaylistEntity } from "./entities/music-playlist.entity";
+import { PlaylistCollectionEntity } from "./entities/playlist-collection.entity";
 
 @Injectable()
 export class RecommendationsService {
@@ -48,13 +49,13 @@ export class RecommendationsService {
         return parsedPlaylists
     }
 
-    async createRecommendation(data: CreateRecommendationDto): Promise<PlaylistCollection> {
+    async createRecommendation(creatorId: string, data: CreateRecommendationDto): Promise<PlaylistCollection> {
         const playlistSets = await this.generatePlaylistCategories(data)
 
         const createdPlaylists = await this.generatePlaylistSongs(playlistSets.playlistCategories)
 
         // create music recommendation
-        const newRec = await this.prismaService.playlistCollection.create({ data: { mediaType: MediaType.MUSIC, description: 'test', prompt: 'test' } })
+        const newRec = await this.prismaService.playlistCollection.create({ data: { mediaType: MediaType.MUSIC, description: 'test', prompt: 'test', creatorId: creatorId} })
 
         console.log('playlist sets ', playlistSets)
         console.log('created playlists ', createdPlaylists)
@@ -105,8 +106,30 @@ export class RecommendationsService {
         return newRec
     }
 
+    /*
     async getRecommendations(): Promise<PlaylistCollection[]> {
         const allRecommendations = await this.prismaService.playlistCollection.findMany()
         return allRecommendations
     }
+        */
+
+    async getPlaylistCollectionById(id: string): Promise<PlaylistCollectionEntity> {
+        const playlistCollection = await this.prismaService.playlistCollection.findUnique({
+            where: {id},
+            include: {
+                playlists: {
+                    include: {
+                        songs: true
+                    }
+                }
+            }
+        })
+
+        if (!playlistCollection) {
+            throw new NotFoundException()
+        }
+
+        return playlistCollection
+    }
+
 }

@@ -5,7 +5,7 @@ import { Role, User } from '@prisma/client';
 export class UsersService {
   private readonly users = [
     {
-      id: 1,
+      id: '2',
       email: 'john@gmail.com',
       name: 'john smith',
       password: 'abc',
@@ -15,7 +15,7 @@ export class UsersService {
       updatedAt: Date.now()
     },
     {
-        id: 1,
+        id: '1',
         email: 'james@gmail.com',
         password: '123',
         name: 'james williams',

@@ -6,8 +6,8 @@ import { SongEntity } from './song.entity';
 
 export class MusicPlaylistEntity {
 
-    @IsNumber()
-    id: number
+    @IsString()
+    id: string
 
     @IsString()
     name: string

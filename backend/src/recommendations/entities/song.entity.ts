@@ -4,8 +4,8 @@ import { SongListItemDto } from '../DTO/song-list-item.dto';
 import { Type } from 'class-transformer';
 
 export class SongEntity {
-  @ApiProperty()
-  id: number;
+  @IsString()
+  id: string;
 
   @ApiProperty()
   input: string;

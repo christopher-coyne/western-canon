@@ -26,7 +26,7 @@ enum Role {
 }
 
 model User {
-  id                  Int                  @id @default(autoincrement())
+  id                  String               @id @default(cuid())
   email               String               @unique
   password            String?
   name                String?
@@ -40,12 +40,12 @@ model User {
 }
 
 model PlaylistCollection {
-  id          Int             @id @default(autoincrement())
+  id          String          @id @default(cuid())
   mediaType   MediaType
   description String
   prompt      String
   playlists   MusicPlaylist[]
-  creatorId   Int
+  creatorId   String
 
   creator   User      @relation(fields: [creatorId], references: [id])
   createdAt DateTime  @default(now())
@@ -54,19 +54,19 @@ model PlaylistCollection {
 }
 
 model MusicPlaylist {
-  id                   Int    @id @default(autoincrement())
+  id                   String @id @default(cuid())
   name                 String
   description          String
-  playlistCollectionId Int
+  playlistCollectionId String
 
   playlistCollection PlaylistCollection @relation(fields: [playlistCollectionId], references: [id])
   songs              Song[]
 }
 
 model Song {
-  id              Int    @id @default(autoincrement())
+  id              String @id @default(cuid())
   input           String
-  musicPlaylistId Int
+  musicPlaylistId String
   spotifyId       String
   /**
    * length          Float

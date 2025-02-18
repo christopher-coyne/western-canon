@@ -12,10 +12,10 @@ import { MusicPlaylistEntity } from './music-playlist.entity';
   prompt      String
   playlists   MusicPlaylist[]
   */
-export class PlaylistCollection {
+export class PlaylistCollectionEntity {
 
-    @IsNumber()
-    id: number
+    @IsString()
+    id: string
 
     @IsString()
     description: string
@@ -25,5 +25,5 @@ export class PlaylistCollection {
     
     @ValidateNested()
     @Type(() => MusicPlaylistEntity)
-    musicPlaylists: MusicPlaylistEntity[];
+    playlists: MusicPlaylistEntity[];
 }
