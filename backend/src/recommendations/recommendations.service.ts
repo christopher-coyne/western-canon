@@ -133,4 +133,19 @@ export class RecommendationsService {
         return playlistCollection
     }
 
+    async getPlaylistById(id: string): Promise<MusicPlaylistEntity> {
+        const playlist = await this.prismaService.musicPlaylist.findUnique({
+            where: {id},
+            include: {
+                songs: true
+            }
+        })
+
+        if (!playlist) {
+            throw new NotFoundException()
+        }
+
+        return playlist
+    }
+
 }

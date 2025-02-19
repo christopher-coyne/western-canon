@@ -25,4 +25,9 @@ export class RecommendationsController {
     async getPlaylistCollection(@Param('id') id: string): Promise<Result<PlaylistCollectionEntity>> {
         return Result.ok(await this.recommendationsService.getPlaylistCollectionById(id))
     }
+
+    @Get('/playlist/:id')
+    async getPlaylist(@Param('id') id: string): Promise<Result<MusicPlaylistEntity>> {
+        return Result.ok(await this.recommendationsService.getPlaylistById(id))
+    }
 }
