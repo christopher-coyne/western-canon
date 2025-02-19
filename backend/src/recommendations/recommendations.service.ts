@@ -183,4 +183,34 @@ export class RecommendationsService {
           return true
     }
 
+    async favoritePlaylist(userId: string, playlistId: string) {
+        const playlist = await this.prismaService.musicPlaylist.findUnique({where: {id: playlistId}})
+
+        if (!playlist) {
+            throw new NotFoundException()
+        }
+
+        await this.prismaService.favoriteMusicPlaylist.create({
+            data: {userId: userId, musicPlaylistId: playlistId}
+          });
+          return true
+    }
+
+    async unFavoritePlaylist(userId: string, playlistId: string) {
+        const playlist = await this.prismaService.musicPlaylist.findUnique({where: {id: playlistId}})
+
+        if (!playlist) {
+            throw new NotFoundException()
+        }
+        await this.prismaService.favoriteMusicPlaylist.delete({
+            where: {
+                userId_musicPlaylistId: {
+                    userId: userId,
+                    musicPlaylistId: playlistId
+                }
+            }
+          });
+          return true
+    }
+
 }

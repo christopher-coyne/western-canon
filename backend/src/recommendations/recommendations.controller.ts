@@ -45,4 +45,18 @@ export class RecommendationsController {
         const userId = req.user.id
         return Result.ok(await this.recommendationsService.deleteSongReaction(userId, id))
     }
+
+    @UseGuards(AuthenticatedGuard)
+    @Post('/playlist/:id/favorite')
+    async favoritePlaylist(@Req() req, @Param('id') id: string): Promise<Result<Boolean>> {
+        const userId = req.user.id
+        return Result.ok(await this.recommendationsService.favoritePlaylist(userId, id))
+    }
+
+    @UseGuards(AuthenticatedGuard)
+    @Delete('/playlist/:id/favorite')
+    async unFavoritePlaylist(@Req() req, @Param('id') id: string): Promise<Result<Boolean>> {
+        const userId = req.user.id
+        return Result.ok(await this.recommendationsService.unFavoritePlaylist(userId, id))
+    }
 }
