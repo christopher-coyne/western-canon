@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { MediaType, PlaylistCollection, Prisma } from "@prisma/client";
+import { MediaType, PlaylistCollection, Prisma, ReactionType } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateRecommendationDto } from "./DTO/create-recommendation.dto";
 import { LlmService } from "src/llm/llm.service";
@@ -146,6 +146,28 @@ export class RecommendationsService {
         }
 
         return playlist
+    }
+
+    async addSongReaction({userId, songId, reactionType}: {userId: string, songId: string, reactionType: ReactionType}) {
+        const created = await this.prismaService.songReaction.upsert({
+            where: {
+              userId_songId: {
+                userId,
+                songId,
+              }
+            },
+            create: {
+              userId,
+              songId,
+              reaction: reactionType,
+            },
+            update: {
+              reaction: reactionType,
+            }
+          });
+
+          console.log('created ', created)
+          return true
     }
 
 }

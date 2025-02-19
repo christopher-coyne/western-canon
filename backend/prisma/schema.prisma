@@ -20,6 +20,11 @@ enum MediaType {
   BOOK
 }
 
+enum ReactionType {
+  LIKE
+  DISLIKE
+}
+
 enum Role {
   USER
   ADMIN
@@ -34,9 +39,11 @@ model User {
   playlistCollections PlaylistCollection[]
   role                Role
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  deletedAt             DateTime?
+  FavoriteMusicPlaylist FavoriteMusicPlaylist[]
+  SongReaction          SongReaction[]
 }
 
 model PlaylistCollection {
@@ -53,14 +60,38 @@ model PlaylistCollection {
   deletedAt DateTime?
 }
 
+model FavoriteMusicPlaylist {
+  id              String @id @default(cuid())
+  userId          String
+  musicPlaylistId String
+
+  user     User          @relation(fields: [userId], references: [id])
+  playlist MusicPlaylist @relation(fields: [musicPlaylistId], references: [id])
+
+  @@unique([userId, musicPlaylistId])
+}
+
+model SongReaction {
+  id       String       @id @default(cuid())
+  reaction ReactionType
+  userId   String
+  songId   String
+
+  user User @relation(fields: [userId], references: [id])
+  song Song @relation(fields: [songId], references: [id])
+
+  @@unique([userId, songId])
+}
+
 model MusicPlaylist {
   id                   String @id @default(cuid())
   name                 String
   description          String
   playlistCollectionId String
 
-  playlistCollection PlaylistCollection @relation(fields: [playlistCollectionId], references: [id])
-  songs              Song[]
+  playlistCollection    PlaylistCollection      @relation(fields: [playlistCollectionId], references: [id])
+  songs                 Song[]
+  FavoriteMusicPlaylist FavoriteMusicPlaylist[]
 }
 
 model Song {
@@ -74,5 +105,6 @@ model Song {
    * datePublished   DateTime
    */
 
-  musicPlaylist MusicPlaylist @relation(fields: [musicPlaylistId], references: [id])
+  musicPlaylist MusicPlaylist  @relation(fields: [musicPlaylistId], references: [id])
+  SongReaction  SongReaction[]
 }
