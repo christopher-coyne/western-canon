@@ -170,4 +170,17 @@ export class RecommendationsService {
           return true
     }
 
+    async deleteSongReaction(userId: string, songId: string) {
+        await this.prismaService.songReaction.delete({
+            where: {
+              userId_songId: {
+                userId,
+                songId,
+              }
+            },
+          });
+
+          return true
+    }
+
 }

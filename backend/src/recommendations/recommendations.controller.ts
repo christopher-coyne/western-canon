@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Injectable, Param, ParseIntPipe, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Injectable, Param, ParseIntPipe, Post, Req, UseGuards } from "@nestjs/common";
 import { MusicPlaylist, PlaylistCollection } from "@prisma/client";
 import { Result } from "src/domain/result";
 import { RecommendationsService } from "./recommendations.service";
@@ -37,5 +37,12 @@ export class RecommendationsController {
         const userId = req.user.id
         console.log('BODY ', body)
         return Result.ok(await this.recommendationsService.addSongReaction({userId, songId: id, reactionType: body.reactionType}))
+    }
+
+    @UseGuards(AuthenticatedGuard)
+    @Delete('/song/:id/reaction')
+    async deleteSongReaction(@Req() req, @Param('id') id: string): Promise<Result<Boolean>> {
+        const userId = req.user.id
+        return Result.ok(await this.recommendationsService.deleteSongReaction(userId, id))
     }
 }
