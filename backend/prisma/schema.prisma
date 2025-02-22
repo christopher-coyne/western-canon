@@ -13,12 +13,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum MediaType {
-  MOVIE
-  VIDEOGAME
-  MUSIC
-  BOOK
-}
+// POST MVP - include other media types
+/**
+ * enum MediaType {
+ * MOVIE
+ * VIDEOGAME
+ * MUSIC
+ * BOOK
+ * }
+ */
 
 enum ReactionType {
   LIKE
@@ -47,12 +50,10 @@ model User {
 }
 
 model PlaylistCollection {
-  id          String          @id @default(cuid())
-  mediaType   MediaType
-  description String
-  prompt      String
-  playlists   MusicPlaylist[]
-  creatorId   String
+  id        String          @id @default(cuid())
+  prompt    String?
+  playlists MusicPlaylist[]
+  creatorId String
 
   creator   User      @relation(fields: [creatorId], references: [id])
   createdAt DateTime  @default(now())
@@ -84,9 +85,10 @@ model SongReaction {
 }
 
 model MusicPlaylist {
-  id                   String @id @default(cuid())
+  id                   String   @id @default(cuid())
   name                 String
   description          String
+  relatedSongs         String[] // might change in future to include profile of spotify artist?
   playlistCollectionId String
 
   playlistCollection    PlaylistCollection      @relation(fields: [playlistCollectionId], references: [id])

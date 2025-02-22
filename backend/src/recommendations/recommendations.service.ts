@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { MediaType, PlaylistCollection, Prisma, ReactionType } from "@prisma/client";
+import { PlaylistCollection, Prisma, ReactionType } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateRecommendationDto } from "./DTO/create-recommendation.dto";
 import { LlmService } from "src/llm/llm.service";
@@ -8,6 +8,7 @@ import { Playlist } from "./DTO/llm-playlist.dto";
 import { z } from "zod";
 import { MusicPlaylistEntity } from "./entities/music-playlist.entity";
 import { PlaylistCollectionEntity } from "./entities/playlist-collection.entity";
+import { Track } from "@spotify/web-api-ts-sdk";
 
 @Injectable()
 export class RecommendationsService {
@@ -20,8 +21,12 @@ export class RecommendationsService {
             ))
             });
 
-        const constructedPrompt = `Here is a list of songs. Provide for me a list of ${data.playlistQuantity} musical sub categories, based on these songs. ${JSON.stringify(data.prompt)}`
+        const constructedPrompt = `Here is a list of songs. Provide for me a list of ${data.playlistQuantity} musical sub categories, based on these songs. ${JSON.stringify(data.prompt)}
+        return your response as a JSON object, in the following format: {playlistCategories: [{name: "string", description: "string", relatedSongs: ["song1"...]}...]} where relatedSongs 
+        is a list of the songs from the input that correspond to this playlistCategory.
+        `
         const playlistSets = await this.llmService.generateResponse(constructedPrompt, PlaylistCategory, 'playlist')
+        console.log('playlist set ', playlistSets)
         return JSON.parse(playlistSets)
     }
 
@@ -49,20 +54,17 @@ export class RecommendationsService {
         return parsedPlaylists
     }
 
-    async createRecommendation(creatorId: string, data: CreateRecommendationDto): Promise<PlaylistCollection> {
-        const playlistSets = await this.generatePlaylistCategories(data)
+    async matchSongsToSpotify(createdPlaylists: any[]): Promise<any> {
+        const playlistResponses = []
 
-        const createdPlaylists = await this.generatePlaylistSongs(playlistSets.playlistCategories)
-
-        // create music recommendation
-        console.log('CREATOR ID ', String(creatorId))
-        const newRec = await this.prismaService.playlistCollection.create({ data: { mediaType: MediaType.MUSIC, description: 'test', prompt: 'test', creatorId: creatorId} })
-
-        console.log('playlist sets ', playlistSets)
-        console.log('created playlists ', createdPlaylists)
-
-        // Match songs in the created Playlists with spotify records
-        // TODO - in future, probably want to match this with other music platforms as well
+        for (const playlist of createdPlaylists) {
+            const playlistSpotifyResponses: Promise<Track | undefined>[] = []
+            for (const song of playlist.songs) {
+                playlistSpotifyResponses.push(this.spotifyService.searchTracks(song.band, song.name))
+            }
+            const spotifyMatchedPlaylist = await Promise.all(playlistSpotifyResponses)
+            console.log('spotify matched playlist ', spotifyMatchedPlaylist)
+        }
         /*
         const spotifyResponsePromises: any = []
         for (const playlist of createdPlaylists) {
@@ -70,30 +72,41 @@ export class RecommendationsService {
             for (const song of playlist.songs) {
                 playlistSpotifyResponses.push(this.spotifyService.searchTracks(song.band, song.name))
             }
-            spotifyResponses.push(playlistSpotifyResponses)
+            spotifyResponsePromises.push(playlistSpotifyResponses)
         }
 
-        const allSpotify
+        const allSpotifyMatches = await Promise.all(spotifyResponsePromises)
         */
 
         /*
         const spotifySearch = await this.spotifyService.searchTracks('black flag', 'my war')
         console.log('spotify search ', spotifySearch)
         */
+    }
 
-        // create playlists with songs
-        /*
-          id              Int    @id @default(autoincrement())
-  input           String
-  musicPlaylistId Int
-  spotifyId       String
-  */
+    async createRecommendation(creatorId: string, data: CreateRecommendationDto): Promise<PlaylistCollection> {
+        const playlistSets = await this.generatePlaylistCategories(data)
+
+        const createdPlaylists = await this.generatePlaylistSongs(playlistSets.playlistCategories)
+
+        // create music recommendation
+        console.log('CREATOR ID ', String(creatorId))
+        const newRec = await this.prismaService.playlistCollection.create({ data: {prompt: 'test', creatorId: creatorId} })
+
+        console.log('playlist sets ', playlistSets)
+        console.log('created playlists ', createdPlaylists)
+
+        // Match songs in the created Playlists with spotify records
+        // TODO - in future, probably want to match this with other music platforms as well
+        await this.matchSongsToSpotify(createdPlaylists)
+
         for (let idx = 0; idx < createdPlaylists.length; idx++) {
             await this.prismaService.musicPlaylist.create({
                 data: {
                     name: playlistSets.playlistCategories[idx].name,
                     description: playlistSets.playlistCategories[idx].description,
                     playlistCollectionId: newRec.id,
+                    relatedSongs: playlistSets.playlistCategories[idx].relatedSongs,
                     songs: {
                         create: createdPlaylists[idx].songs.map(song => ({
                             input: `${song.name} ${song.band}`,
@@ -211,6 +224,15 @@ export class RecommendationsService {
             }
           });
           return true
+    }
+
+    async getFavoritePlaylists(userId: string) {
+        const favoritePlaylists = await this.prismaService.favoriteMusicPlaylist.findMany({
+            where: {userId},
+            include: {playlist: {include: {songs: true}}}
+        })
+
+        return favoritePlaylists.map(favoritePlaylists => favoritePlaylists.playlist)
     }
 
 }

@@ -59,4 +59,11 @@ export class RecommendationsController {
         const userId = req.user.id
         return Result.ok(await this.recommendationsService.unFavoritePlaylist(userId, id))
     }
+
+    @UseGuards(AuthenticatedGuard)
+    @Get('/playlist/favorite')
+    async getFavoritePlaylists(@Req() req): Promise<Result<MusicPlaylist[]>> {
+        const userId = req.user.id
+        return Result.ok(await this.recommendationsService.getFavoritePlaylists(userId))
+    }
 }
