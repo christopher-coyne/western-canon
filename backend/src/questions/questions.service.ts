@@ -1,64 +1,77 @@
-import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateQuestionDto } from "./DTO/CreateQuestionDto";
 
 @Injectable()
 export class QuestionsService {
-    constructor(private prismaService: PrismaService) { }
+  constructor(private prismaService: PrismaService) {}
 
-    async getQuestions() {
-       return await this.prismaService.question.findMany()
+  async getQuestions() {
+    return await this.prismaService.question.findMany();
+  }
+
+  async getQuestionById(id: string) {
+    const question = await this.prismaService.question.findUnique({
+      where: { id },
+    });
+
+    if (!question) {
+      throw new NotFoundException();
     }
 
-    async getQuestionById(id: string) {
-        const question = await this.prismaService.question.findUnique({where: {id}})
+    return question;
+  }
 
-        if (!question) {
-            throw new NotFoundException()
-        }
+  async createQuestion(data: CreateQuestionDto, userId: string) {
+    const studyGuide = await this.prismaService.studyGuide.findUnique({
+      where: { id: data.studyGuideId },
+    });
 
-        return question
+    if (!studyGuide) {
+      throw new NotFoundException();
     }
 
-    async createQuestion(data: CreateQuestionDto, userId: string) {
-        const studyGuide = await this.prismaService.studyGuide.findUnique({
-            where: {id: data.studyGuideId}
-        })
-
-        if (!studyGuide) {
-            throw new NotFoundException()
-        }
-
-        if (studyGuide.authorId !== userId) {
-            throw new UnauthorizedException()
-        }
-
-        await this.prismaService.question.create({
-            data
-        })
-
-        return true
+    if (studyGuide.authorId !== userId) {
+      throw new UnauthorizedException();
     }
 
-    async updateQuestion({id, data, userId}: {id: string, data: CreateQuestionDto, userId: string}) {
-        const studyGuide = await this.prismaService.studyGuide.findUnique({
-            where: {id: data.studyGuideId}
-        })
+    await this.prismaService.question.create({
+      data,
+    });
 
-        if (!studyGuide) {
-            throw new NotFoundException()
-        }
+    return true;
+  }
 
-        if (studyGuide.authorId !== userId) {
-            throw new UnauthorizedException()
-        }
+  async updateQuestion({
+    id,
+    data,
+    userId,
+  }: {
+    id: string;
+    data: CreateQuestionDto;
+    userId: string;
+  }) {
+    const studyGuide = await this.prismaService.studyGuide.findUnique({
+      where: { id: data.studyGuideId },
+    });
 
-        await this.prismaService.question.update({
-            where: {id},
-            data
-        })
-
-        return true
+    if (!studyGuide) {
+      throw new NotFoundException();
     }
 
+    if (studyGuide.authorId !== userId) {
+      throw new UnauthorizedException();
+    }
+
+    await this.prismaService.question.update({
+      where: { id },
+      data,
+    });
+
+    return true;
+  }
 }

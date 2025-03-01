@@ -1,3 +1,3 @@
 export interface LlmCallerInterface {
-    generateResponse: any
+  generateResponse: any;
 }

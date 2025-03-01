@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import {  StudyGuidesService } from './study-guides.service';
+import { Module } from "@nestjs/common";
+import { StudyGuidesService } from "./study-guides.service";
 
 @Module({
   imports: [StudyGuidesService],

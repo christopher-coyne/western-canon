@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsNumber, IsPositive, IsString } from "class-validator";
 
 /*
 model Section {
@@ -12,14 +12,13 @@ model Section {
 }
   */
 export class CreateStudyGuideSectionDto {
-
-@ApiProperty()
-@IsString()
-@IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   title: string;
 
   @ApiProperty()
-@IsNumber()
-@IsPositive()
+  @IsNumber()
+  @IsPositive()
   order: number;
 }

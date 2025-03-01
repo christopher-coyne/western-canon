@@ -1,10 +1,15 @@
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus } from "@nestjs/common";
 export class Result<T> {
   isSuccess: boolean;
   private data?: any;
   message?: string;
   errorCode?: HttpStatus;
-  constructor(isSuccess: boolean, data?: any, message?: string, errorCode?: HttpStatus) {
+  constructor(
+    isSuccess: boolean,
+    data?: any,
+    message?: string,
+    errorCode?: HttpStatus
+  ) {
     this.data = data;
     this.isSuccess = isSuccess;
     this.message = message;
@@ -16,7 +21,7 @@ export class Result<T> {
   }
 
   static ok<U>(data: U, message?: string): Result<U> {
-    console.log('DATA OK ', data)
+    console.log("DATA OK ", data);
     return new Result(true, data, message);
   }
 

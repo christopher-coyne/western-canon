@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 /*
 model Question {
   id        String             @id @default(cuid())
@@ -11,24 +11,23 @@ model Question {
 }
   */
 export class CreateQuestionDto {
-
-@ApiProperty()
-@IsString()
-@IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   title: string;
 
   @ApiProperty()
-@IsString()
-@IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   link: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-    studyGuideId: string;
+  studyGuideId: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-    sectionId: string;
+  sectionId: string;
 }
