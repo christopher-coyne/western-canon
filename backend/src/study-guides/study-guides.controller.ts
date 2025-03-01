@@ -15,7 +15,7 @@ export class StudyGuidesController {
   }
 
   @Get('/:id')
-  async getStudyGuide(@Param() id: string) {
+  async getStudyGuide(@Param('id') id: string) {
     return Result.ok(await this.studyGuidesService.getStudyGuideById(id));
   }
 
@@ -28,7 +28,7 @@ export class StudyGuidesController {
 
   @UseGuards(AuthenticatedGuard)
   @Put('/:id')
-  async updateStudyGuide(@Req() req, @Param() id: string, @Body() body: CreateStudyGuideDto) {
+  async updateStudyGuide(@Req() req, @Param('id') id: string, @Body() body: CreateStudyGuideDto) {
     const userId = req.user.id
     return Result.ok(await this.studyGuidesService.updateStudyGuide({userId, data: body, id}));
   }
