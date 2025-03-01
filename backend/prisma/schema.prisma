@@ -13,100 +13,154 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// POST MVP - include other media types
-/**
- * enum MediaType {
- * MOVIE
- * VIDEOGAME
- * MUSIC
- * BOOK
- * }
- */
-
-enum ReactionType {
-  LIKE
-  DISLIKE
-}
-
-enum Role {
-  USER
-  ADMIN
-}
+// This is the Prisma schema for the study guide application
 
 model User {
-  id                  String               @id @default(cuid())
-  email               String               @unique
-  password            String?
-  name                String?
-  credits             Float
-  playlistCollections PlaylistCollection[]
-  role                Role
-
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-  deletedAt             DateTime?
-  FavoriteMusicPlaylist FavoriteMusicPlaylist[]
-  SongReaction          SongReaction[]
+  id                String               @id @default(cuid())
+  email             String               @unique
+  name              String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  studyGuides       StudyGuide[] // Created study guides
+  favoriteGuides    StudyGuideFavorite[]
+  favoriteQuestions QuestionFavorite[]
+  Project           Project[]
+  ProjectFavorite   ProjectFavorite[]
 }
 
-model PlaylistCollection {
-  id        String          @id @default(cuid())
-  prompt    String?
-  playlists MusicPlaylist[]
-  creatorId String
-
-  creator   User      @relation(fields: [creatorId], references: [id])
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+model StudyGuide {
+  id          String               @id @default(cuid())
+  title       String
+  description String
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  author      User                 @relation(fields: [authorId], references: [id])
+  authorId    String
+  sections    Section[]
+  tags        Tag[]
+  favorites   StudyGuideFavorite[]
 }
 
-model FavoriteMusicPlaylist {
-  id              String @id @default(cuid())
-  userId          String
-  musicPlaylistId String
-
-  user     User          @relation(fields: [userId], references: [id])
-  playlist MusicPlaylist @relation(fields: [musicPlaylistId], references: [id])
-
-  @@unique([userId, musicPlaylistId])
+model Section {
+  id           String     @id @default(cuid())
+  title        String
+  order        Int
+  studyGuide   StudyGuide @relation(fields: [studyGuideId], references: [id])
+  studyGuideId String
+  questions    Question[]
 }
 
-model SongReaction {
-  id       String       @id @default(cuid())
-  reaction ReactionType
-  userId   String
-  songId   String
-
-  user User @relation(fields: [userId], references: [id])
-  song Song @relation(fields: [songId], references: [id])
-
-  @@unique([userId, songId])
+model Question {
+  id        String             @id @default(cuid())
+  title     String
+  link      String
+  section   Section            @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  sectionId String
+  favorites QuestionFavorite[]
 }
 
-model MusicPlaylist {
-  id                   String   @id @default(cuid())
-  name                 String
-  description          String
-  relatedSongs         String[] // might change in future to include profile of spotify artist?
-  playlistCollectionId String
-
-  playlistCollection    PlaylistCollection      @relation(fields: [playlistCollectionId], references: [id])
-  songs                 Song[]
-  FavoriteMusicPlaylist FavoriteMusicPlaylist[]
+model Tag {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  studyGuides StudyGuide[]
 }
 
-model Song {
-  id              String @id @default(cuid())
-  input           String
-  musicPlaylistId String
-  spotifyId       String
-  /**
-   * length          Float
-   * band            String
-   * datePublished   DateTime
-   */
+model StudyGuideFavorite {
+  id           String     @id @default(cuid())
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  studyGuide   StudyGuide @relation(fields: [studyGuideId], references: [id], onDelete: Cascade)
+  studyGuideId String
+  createdAt    DateTime   @default(now())
 
-  musicPlaylist MusicPlaylist  @relation(fields: [musicPlaylistId], references: [id])
-  SongReaction  SongReaction[]
+  @@unique([userId, studyGuideId])
 }
+
+model QuestionFavorite {
+  id         String   @id @default(cuid())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, questionId])
+}
+
+model ProjectFavorite {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, projectId])
+}
+
+model Project {
+  id          String @id @default(cuid())
+  title       String
+  description String // Markdown content
+  creatorId   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  creator         User              @relation(fields: [creatorId], references: [id])
+  ProjectFavorite ProjectFavorite[]
+}
+
+/**
+ * Study Guides
+ * POST   /api/study-guides           - Create new study guide
+ * GET    /api/study-guides           - List all study guides (with pagination & filters)
+ * GET    /api/study-guides/:id       - Get specific study guide with all sections
+ * PUT    /api/study-guides/:id       - Update study guide
+ * DELETE /api/study-guides/:id       - Delete study guide
+ */
+
+/**
+ * Study Guide Sections
+ * POST   /api/study-guides/:id/sections     - Add section to study guide
+ * PUT    /api/sections/:id                  - Update section
+ * DELETE /api/sections/:id                  - Delete section
+ * PUT    /api/sections/reorder             - Reorder sections (batch update)
+ */
+
+/**
+ * Study Guide Questions
+ * POST   /api/sections/:id/questions        - Add question to section
+ * PUT    /api/questions/:id                 - Update question
+ * DELETE /api/questions/:id                 - Delete question
+ */
+
+/**
+ * Favorites
+ * POST   /api/study-guides/:id/favorite     - Favorite a study guide
+ * DELETE /api/study-guides/:id/favorite     - Unfavorite a study guide
+ * POST   /api/questions/:id/favorite        - Favorite a question
+ * DELETE /api/questions/:id/favorite        - Unfavorite a question
+ * GET    /api/users/me/favorites           - Get user's favorite guides & questions
+ */
+
+/**
+ * Tags
+ * GET    /api/tags                         - List all tags
+ * POST   /api/tags                         - Create new tag
+ * GET    /api/study-guides/tags/:tag       - Get study guides by tag
+ */
+
+/**
+ * Projects
+ * POST   /api/projects                     - Create new project
+ * GET    /api/projects                     - List all projects
+ * GET    /api/projects/:id                 - Get specific project
+ * PUT    /api/projects/:id                 - Update project
+ * DELETE /api/projects/:id                 - Delete project
+ */
+
+/**
+ * Search
+ * GET    /api/search                       - Search across study guides, questions, and projects
+ */
