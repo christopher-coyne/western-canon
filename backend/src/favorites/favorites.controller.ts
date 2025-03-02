@@ -22,6 +22,7 @@ export class FavoritesController {
     return Result.ok(await this.favoritesService.getFavoriteProjects(userId));
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Post("/projects/:id")
   async favoriteProject(@Req() req, @Param() projectId) {
     const userId = req.user.id;
@@ -30,6 +31,7 @@ export class FavoritesController {
     );
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Delete("/projects/:id")
   async unfavoriteProject(@Req() req, @Param() projectId) {
     const userId = req.user.id;
@@ -44,6 +46,7 @@ export class FavoritesController {
     return Result.ok(await this.favoritesService.getFavoriteProjects(userId));
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Post("/questions/:id")
   async favoriteQuestion(@Req() req, @Param() questionId) {
     const userId = req.user.id;
@@ -52,6 +55,7 @@ export class FavoritesController {
     );
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Delete("/questions/:id")
   async unfavoriteQuestion(@Req() req, @Param() questionId) {
     const userId = req.user.id;
@@ -66,6 +70,7 @@ export class FavoritesController {
     return Result.ok(await this.favoritesService.getFavoriteProjects(userId));
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Post("/study-guides/:id")
   async favoriteStudyGuide(@Req() req, @Param() studyGuideId) {
     const userId = req.user.id;
@@ -74,6 +79,7 @@ export class FavoritesController {
     );
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Delete("/study-guides/:id")
   async unfavoriteStudyGuide(@Req() req, @Param() studyGuideId) {
     const userId = req.user.id;

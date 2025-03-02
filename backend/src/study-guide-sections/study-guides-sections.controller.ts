@@ -21,10 +21,11 @@ export class StudyGuidesController {
   ) {}
 
   @Get("/:id/questions")
-  async getQuestions() {
-    return Result.ok(await this.studyGuidesSectionsService.getQuestions("id"));
+  async getQuestions(@Param("id") id: string) {
+    return Result.ok(await this.studyGuidesSectionsService.getQuestions(id));
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Post("/:id/question")
   async createQuestion(
     @Req() req,
