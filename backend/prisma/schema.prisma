@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 // This is the Prisma schema for the study guide application
 
 model User {
@@ -21,7 +26,8 @@ model User {
   name              String?
   createdAt         DateTime             @default(now())
   updatedAt         DateTime             @updatedAt
-  studyGuides       StudyGuide[] // Created study guides
+  role              Role                 @default(USER)
+  studyGuides       StudyGuide[]
   favoriteGuides    StudyGuideFavorite[]
   favoriteQuestions QuestionFavorite[]
   Project           Project[]

@@ -12,19 +12,6 @@ import { LocalAuthGuard } from "./localAuthenticated.guard";
 
 @Controller("auth")
 export class AuthController {
-  /*
-  @UseGuards(AuthGuard('local'))
-  @Post('login')
-  async login(@Request() req, @Param('password') password: string, @Param('username') username: string) {
-    return req.user;
-  }
-
-  @UseGuards(AuthGuard('local'))
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
-    */
   @UseGuards(LocalAuthGuard)
   @Post("login")
   login(@Request() req) {
@@ -38,13 +25,6 @@ export class AuthController {
       });
       return req.user;
     });
-
-    /*
-  console.log('Full session:', req.session);
-  console.log('Passport session:', req.session.passport);
-  console.log('User:', req.user);
- return req.user
- */
   }
 
   @Get("logout")
