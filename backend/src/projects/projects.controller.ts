@@ -12,11 +12,17 @@ import { ProjectsService } from "./projects.service";
 import { Result } from "src/domain/result";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { CreateProjectDto } from "./DTO/CreateProjectDto";
+import { ApiResponse } from "@nestjs/swagger";
+import { ProjectEntity } from "./projects.entity";
 
 @Controller("/projects")
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
+  @ApiResponse({
+    type: ProjectEntity,
+    isArray: true,
+  })
   @Get("/")
   async getProjects() {
     return Result.ok(await this.projectsService.getProjects());

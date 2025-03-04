@@ -19,7 +19,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "generate-api": "swagger-typescript-api -p http://localhost:3000/api-json -o ../frontend/src/types/api"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.36.3",
@@ -40,6 +41,7 @@
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "swagger-typescript-api": "^13.0.23",
     "zod": "^3.24.1"
   },
   "devDependencies": {
