@@ -18,6 +18,13 @@ enum Role {
   ADMIN
 }
 
+enum TechnologyType {
+  LANGUAGE // typescript, java, javascript...
+  DOMAIN // frontend, backend, devops, embedded, security...
+  FRAMEWORK // react, nextjs, QT
+  PLATFORM // Docker, Linux, AWS...
+}
+
 // This is the Prisma schema for the study guide application
 
 model User {
@@ -43,7 +50,7 @@ model StudyGuide {
   author      User                 @relation(fields: [authorId], references: [id])
   authorId    String
   sections    Section[]
-  tags        Tag[]
+  tags        TechnologyTag[]
   favorites   StudyGuideFavorite[]
 }
 
@@ -65,10 +72,12 @@ model Question {
   favorites QuestionFavorite[]
 }
 
-model Tag {
+model TechnologyTag {
   id          String       @id @default(cuid())
   name        String       @unique
+  type        TechnologyType
   studyGuides StudyGuide[]
+  projects    Project[]
 }
 
 model StudyGuideFavorite {
@@ -113,6 +122,7 @@ model Project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  tags      TechnologyTag[]
   creator         User              @relation(fields: [creatorId], references: [id])
   ProjectFavorite ProjectFavorite[]
 }

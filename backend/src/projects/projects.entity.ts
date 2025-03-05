@@ -3,6 +3,7 @@ import { Exclude, Type } from "class-transformer";
 import { Project } from "@prisma/client";
 import { UserEntity } from "src/users/user.entity";
 import { ApiProperty } from "@nestjs/swagger";
+import { UserDto } from "src/users/DTO/GetUserDto";
 
 export class ProjectEntity implements Project {
   @ApiProperty()
@@ -17,9 +18,9 @@ export class ProjectEntity implements Project {
   @IsString()
   description: string;
 
-  @ApiProperty({ type: UserEntity })
-  @Type(() => UserEntity)
-  creator: UserEntity;
+  @ApiProperty({ type: UserDto })
+  @Type(() => UserDto)
+  creator: UserDto;
 
   @ApiProperty()
   @Exclude()

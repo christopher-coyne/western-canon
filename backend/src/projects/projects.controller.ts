@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from "@nestjs/common";
@@ -14,6 +15,7 @@ import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { CreateProjectDto } from "./DTO/CreateProjectDto";
 import { ApiResponse } from "@nestjs/swagger";
 import { ProjectEntity } from "./projects.entity";
+import { GetProjectsDto } from "./DTO/GetProjectsDto";
 
 @Controller("/projects")
 export class ProjectsController {
@@ -24,8 +26,8 @@ export class ProjectsController {
     isArray: true,
   })
   @Get("/")
-  async getProjects() {
-    return Result.ok(await this.projectsService.getProjects());
+  async getProjects(@Query() data: GetProjectsDto) {
+    return Result.ok(await this.projectsService.getProjects(data));
   }
 
   @Get("/:id")

@@ -5,15 +5,73 @@ import {
 } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateProjectDto } from "./DTO/CreateProjectDto";
+import { GetProjectsDto } from "./DTO/GetProjectsDto";
+import { createPaginatedResponse } from "src/common/DTO/Pagination.dto";
+import { ProjectEntity } from "./projects.entity";
 
 @Injectable()
 export class ProjectsService {
   constructor(private prismaService: PrismaService) {}
 
-  async getProjects() {
-    return await this.prismaService.project.findMany({
-      include: { creator: true },
+  async getProjects(data: GetProjectsDto) {
+    const { page, query, difficulties, tags } = data;
+    const pageSize = 12;
+    const skip = (page - 1) * pageSize;
+
+    // Build where conditions
+    const where: any = {};
+
+    // Add search query condition
+    if (query) {
+      where.OR = [
+        { title: { contains: query, mode: "insensitive" } },
+        { description: { contains: query, mode: "insensitive" } },
+      ];
+    }
+
+    // Add difficulty filter
+    if (difficulties?.length) {
+      where.difficulty = { in: difficulties };
+    }
+
+    // Add tags filter
+    if (tags?.length) {
+      where.tags = {
+        some: {
+          id: { in: tags },
+        },
+      };
+    }
+
+    // Get total count for pagination
+    const total = await this.prismaService.project.count({ where });
+
+    // Get results with pagination
+    const items = await this.prismaService.project.findMany({
+      where,
+      include: {
+        creator: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip,
+      take: pageSize,
     });
+
+    return createPaginatedResponse<ProjectEntity>(items, total, page, pageSize);
+    /*
+    return {
+      items: items,
+      isSuccess: true,
+      pagination: {
+        total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize)
+      }
+    };
+    */
   }
 
   async getProjectById(id: string) {
