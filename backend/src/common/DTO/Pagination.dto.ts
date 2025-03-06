@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsInt, IsOptional, Min } from "class-validator";
+// import { HttpStatus } from "@nestjs/common";
 
 // Input DTO for pagination requests
 export class PaginationQueryDto {
@@ -29,48 +30,61 @@ export class PaginationQueryDto {
   pageSize: number = 12;
 }
 
-// Response DTO for pagination metadata
-export class PaginationMetaDto {
-  @ApiProperty({ description: "Total number of items", type: Number })
+import { HttpStatus } from "@nestjs/common";
+
+export class PaginationMeta {
   total: number;
-
-  @ApiProperty({ description: "Current page number", type: Number })
   page: number;
-
-  @ApiProperty({ description: "Number of items per page", type: Number })
   pageSize: number;
-
-  @ApiProperty({ description: "Total number of pages", type: Number })
   totalPages: number;
 }
 
-// Generic paginated response DTO
-export class PaginatedResponseDto<T> {
-  @ApiProperty({ description: "Success status" })
+export class PaginatedResult<T> {
   isSuccess: boolean;
-
-  @ApiProperty({ description: "Response data" })
   data: T[];
+  pagination: PaginationMeta;
+  message?: string;
+  errorCode?: HttpStatus;
 
-  @ApiProperty({ description: "Pagination metadata", type: PaginationMetaDto })
-  pagination: PaginationMetaDto;
-}
+  constructor(
+    isSuccess: boolean,
+    data: T[],
+    pagination: PaginationMeta,
+    message?: string,
+    errorCode?: HttpStatus
+  ) {
+    this.isSuccess = isSuccess;
+    this.data = data;
+    this.pagination = pagination;
+    this.message = message;
+    this.errorCode = errorCode;
+  }
 
-// Helper function to create paginated response
-export function createPaginatedResponse<T>(
-  items: T[],
-  total: number,
-  page: number,
-  pageSize: number
-): PaginatedResponseDto<T> {
-  return {
-    data: items,
-    isSuccess: true,
-    pagination: {
+  static ok<U>(
+    items: U[],
+    total: number,
+    page: number,
+    pageSize: number,
+    message?: string
+  ): PaginatedResult<U> {
+    const pagination = {
       total,
       page,
       pageSize,
       totalPages: Math.ceil(total / pageSize),
-    },
-  };
+    };
+
+    return new PaginatedResult(true, items, pagination, message);
+  }
+
+  static fail<U>(message: string, errorCode: HttpStatus): PaginatedResult<U> {
+    const emptyPagination = {
+      total: 0,
+      page: 1,
+      pageSize: 0,
+      totalPages: 0,
+    };
+
+    return new PaginatedResult(false, [], emptyPagination, message, errorCode);
+  }
 }

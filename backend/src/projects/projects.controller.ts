@@ -16,6 +16,7 @@ import { CreateProjectDto } from "./DTO/CreateProjectDto";
 import { ApiResponse } from "@nestjs/swagger";
 import { ProjectEntity } from "./projects.entity";
 import { GetProjectsDto } from "./DTO/GetProjectsDto";
+import { PaginatedResult } from "src/common/DTO/Pagination.dto";
 
 @Controller("/projects")
 export class ProjectsController {
@@ -27,7 +28,10 @@ export class ProjectsController {
   })
   @Get("/")
   async getProjects(@Query() data: GetProjectsDto) {
-    return Result.ok(await this.projectsService.getProjects(data));
+    console.log("data ", data);
+    const { items, total, page, pageSize } =
+      await this.projectsService.getProjects(data);
+    return PaginatedResult.ok(items, total, page, pageSize);
   }
 
   @Get("/:id")

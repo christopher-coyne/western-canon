@@ -6,7 +6,7 @@ import {
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateProjectDto } from "./DTO/CreateProjectDto";
 import { GetProjectsDto } from "./DTO/GetProjectsDto";
-import { createPaginatedResponse } from "src/common/DTO/Pagination.dto";
+import { PaginatedResult } from "src/common/DTO/Pagination.dto";
 import { ProjectEntity } from "./projects.entity";
 
 @Injectable()
@@ -15,6 +15,7 @@ export class ProjectsService {
 
   async getProjects(data: GetProjectsDto) {
     const { page, query, difficulties, tags } = data;
+    console.log("page ", page);
     const pageSize = 12;
     const skip = (page - 1) * pageSize;
 
@@ -59,19 +60,7 @@ export class ProjectsService {
       take: pageSize,
     });
 
-    return createPaginatedResponse<ProjectEntity>(items, total, page, pageSize);
-    /*
-    return {
-      items: items,
-      isSuccess: true,
-      pagination: {
-        total,
-        page,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize)
-      }
-    };
-    */
+    return { items, total, page, pageSize };
   }
 
   async getProjectById(id: string) {
