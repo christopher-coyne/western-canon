@@ -12,15 +12,21 @@ import {
 import { ProjectsService } from "./projects.service";
 import { Result } from "src/domain/result";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
-import { CreateProjectDto } from "./DTO/CreateProjectDto";
+import { CreateProjectDto } from "./DTO/request/CreateProjectDto";
 import { ApiResponse } from "@nestjs/swagger";
-import { ProjectEntity } from "./projects.entity";
-import { GetProjectsDto } from "./DTO/GetProjectsDto";
+import { ProjectEntity } from "./DTO/response/projects.entity";
+import { GetProjectsDto } from "./DTO/request/GetProjectsDto";
 import { PaginatedResult } from "src/common/DTO/Pagination.dto";
 
 @Controller("/projects")
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
+
+  @Get("test")
+  async test() {
+    console.log("TESTING... ");
+    return "hello world";
+  }
 
   @ApiResponse({
     type: ProjectEntity,
@@ -35,7 +41,9 @@ export class ProjectsController {
   }
 
   @Get("/:id")
-  async getProjectById(@Param() param: string) {
+  async getProjectById(@Param("id") param: string) {
+    console.log("HERE!!!");
+    console.log("param ", param);
     return Result.ok(await this.projectsService.getProjectById(param));
   }
 

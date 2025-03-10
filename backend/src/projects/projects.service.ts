@@ -4,10 +4,10 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateProjectDto } from "./DTO/CreateProjectDto";
-import { GetProjectsDto } from "./DTO/GetProjectsDto";
+import { CreateProjectDto } from "./DTO/request/CreateProjectDto";
+import { GetProjectsDto } from "./DTO/request/GetProjectsDto";
 import { PaginatedResult } from "src/common/DTO/Pagination.dto";
-import { ProjectEntity } from "./projects.entity";
+import { ProjectEntity } from "./DTO/response/projects.entity";
 
 @Injectable()
 export class ProjectsService {
@@ -64,10 +64,15 @@ export class ProjectsService {
   }
 
   async getProjectById(id: string) {
-    return await this.prismaService.project.findUnique({
+    const project = await this.prismaService.project.findUnique({
       where: { id },
       include: { creator: true },
     });
+    if (!project) {
+      throw new NotFoundException();
+    }
+
+    return project;
   }
 
   async deleteProjectById(userId: string, id: string) {

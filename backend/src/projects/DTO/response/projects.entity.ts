@@ -4,6 +4,7 @@ import { Project } from "@prisma/client";
 import { UserEntity } from "src/users/user.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { UserDto } from "src/users/DTO/GetUserDto";
+import { TechnologyTagDto } from "src/technology-tags/DTO/response/technology-tag";
 
 export class ProjectEntity implements Project {
   @ApiProperty()
@@ -21,6 +22,10 @@ export class ProjectEntity implements Project {
   @ApiProperty({ type: UserDto })
   @Type(() => UserDto)
   creator: UserDto;
+
+  @ApiProperty({ type: [TechnologyTagDto] })
+  @Type(() => TechnologyTagDto)
+  tags: TechnologyTagDto[];
 
   @ApiProperty()
   @Exclude()

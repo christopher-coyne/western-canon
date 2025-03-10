@@ -9,13 +9,35 @@
  * ---------------------------------------------------------------
  */
 
-export type UserEntity = object;
+export interface UserDto {
+  /** Unique user identifier */
+  id: string;
+  /** User email address */
+  email: string;
+  /** User display name */
+  name?: object;
+  /**
+   * User role
+   * @default "USER"
+   */
+  role: "USER" | "ADMIN";
+  /**
+   * User creation timestamp
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * User last update timestamp
+   * @format date-time
+   */
+  updatedAt: string;
+}
 
 export interface ProjectEntity {
   id: string;
   title: string;
   description: string;
-  creator: UserEntity;
+  creator: UserDto;
   creatorId: string;
   /** @format date-time */
   createdAt: string;
@@ -290,10 +312,32 @@ export class Api<
      * @name ProjectsControllerGetProjects
      * @request GET:/projects
      */
-    projectsControllerGetProjects: (params: RequestParams = {}) =>
+    projectsControllerGetProjects: (
+      query?: {
+        /**
+         * Page number for pagination
+         * @default 1
+         */
+        page?: number;
+        /** Search query string */
+        query?: string;
+        /**
+         * Filter by difficulties (comma-separated)
+         * @example "beginner,intermediate"
+         */
+        difficulties?: string;
+        /**
+         * Filter by tag IDs (comma-separated)
+         * @example "1,2,3"
+         */
+        tags?: string;
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<any, ProjectEntity[]>({
         path: `/projects`,
         method: "GET",
+        query: query,
         ...params,
       }),
 
