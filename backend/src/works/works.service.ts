@@ -1,17 +1,21 @@
-import { Injectable } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
-export class FeedService {
+export class WorksService {
   constructor(private prismaService: PrismaService) {}
 
-  async getFeed(page = 1, pageSize = 10) {
+  async getWorks(page = 1, pageSize = 10) {
     const [items, total] = await Promise.all([
-      this.prismaService.snippet.findMany({
+      this.prismaService.work.findMany({
         skip: (page - 1) * pageSize,
         take: pageSize,
       }),
-      this.prismaService.snippet.count(),
+      this.prismaService.work.count(),
     ]);
 
     return {
