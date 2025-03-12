@@ -18,165 +18,119 @@ enum Role {
   ADMIN
 }
 
-enum TechnologyType {
-  LANGUAGE // typescript, java, javascript...
-  DOMAIN // frontend, backend, devops, embedded, security...
-  FRAMEWORK // react, nextjs, QT
-  PLATFORM // Docker, Linux, AWS...
-}
-
-// This is the Prisma schema for the study guide application
-
 model User {
-  id                String               @id @default(cuid())
-  email             String               @unique
-  name              String?
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
-  role              Role                 @default(USER)
-  studyGuides       StudyGuide[]
-  favoriteGuides    StudyGuideFavorite[]
-  favoriteQuestions QuestionFavorite[]
-  Project           Project[]
-  ProjectFavorite   ProjectFavorite[]
+  id        String     @id @default(uuid())
+  email     String     @unique
+  name      String
+  password  String
+  role      Role
+  dayStreak Int        @default(0)
+  lastActive DateTime?
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+
+  favorites Favorite[]
+
+  @@map("users")
 }
 
-model StudyGuide {
-  id          String               @id @default(cuid())
-  title       String
-  description String
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
-  author      User                 @relation(fields: [authorId], references: [id])
-  authorId    String
-  sections    Section[]
-  tags        TechnologyTag[]
-  favorites   StudyGuideFavorite[]
+model Author {
+  id         String    @id @default(uuid())
+  name       String
+  birthYear     Int?
+  birthYearApprox Boolean @default(true)
+  deathYear     Int?
+  deathYearApprox Boolean @default(true)
+  intro    String @db.Text
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt DateTime?
+  
+  works      Work[]
+  genres     AuthorGenre[]
+  
+  @@map("authors")
 }
 
-model Section {
-  id           String     @id @default(cuid())
+model Work {
+  id           String     @id @default(uuid())
   title        String
-  order        Int
-  studyGuide   StudyGuide @relation(fields: [studyGuideId], references: [id])
-  studyGuideId String
-  questions    Question[]
-}
+  introduction String     @db.Text
+  pageCount    Int?
+  publishYear  Int?
+  authorId     String
 
-model Question {
-  id        String             @id @default(cuid())
-  title     String
-  link      String
-  section   Section            @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  sectionId String
-  favorites QuestionFavorite[]
-}
-
-model TechnologyTag {
-  id          String       @id @default(cuid())
-  name        String       @unique
-  type        TechnologyType
-  studyGuides StudyGuide[]
-  projects    Project[]
-}
-
-model StudyGuideFavorite {
-  id           String     @id @default(cuid())
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String
-  studyGuide   StudyGuide @relation(fields: [studyGuideId], references: [id], onDelete: Cascade)
-  studyGuideId String
   createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt DateTime?
 
-  @@unique([userId, studyGuideId])
+  author       Author     @relation(fields: [authorId], references: [id])
+  snippets     Snippet[]
+  genres       WorkGenre[]
+  
+  @@map("works")
 }
 
-model QuestionFavorite {
-  id         String   @id @default(cuid())
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  questionId String
-  createdAt  DateTime @default(now())
+model Snippet {
+  id        String     @id @default(uuid())
+  content   String     @db.Text
+  analysis  String?    @db.Text
+  workId    String
 
-  @@unique([userId, questionId])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+  
+  work      Work       @relation(fields: [workId], references: [id])
+  favorites Favorite[]
+  
+  @@map("snippets")
 }
 
-model ProjectFavorite {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Genre {
+  id         String       @id @default(uuid())
+  name       String       @unique
+
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  
+  works      WorkGenre[]
+  authors    AuthorGenre[]
+  
+  @@map("genres")
+}
+
+model WorkGenre {
+  workId    String
+  genreId   String
+  work      Work     @relation(fields: [workId], references: [id])
+  genre     Genre    @relation(fields: [genreId], references: [id])
+  
+  @@id([workId, genreId])
+  @@map("work_genres")
+}
+
+model AuthorGenre {
+  authorId  String
+  genreId   String
+  author    Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  genre     Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  
+  @@id([authorId, genreId])
+  @@map("author_genres")
+}
+
+model Favorite {
   userId    String
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId String
+  snippetId String
   createdAt DateTime @default(now())
-
-  @@unique([userId, projectId])
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  snippet   Snippet  @relation(fields: [snippetId], references: [id], onDelete: Cascade)
+  
+  @@id([userId, snippetId])
+  @@map("favorites")
 }
-
-model Project {
-  id          String @id @default(cuid())
-  title       String
-  description String // Markdown content
-  creatorId   String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  tags      TechnologyTag[]
-  creator         User              @relation(fields: [creatorId], references: [id])
-  ProjectFavorite ProjectFavorite[]
-}
-
-/**
- * Study Guides
- * POST   /api/study-guides           - Create new study guide
- * GET    /api/study-guides           - List all study guides (with pagination & filters)
- * GET    /api/study-guides/:id       - Get specific study guide with all sections
- * PUT    /api/study-guides/:id       - Update study guide
- * DELETE /api/study-guides/:id       - Delete study guide
- */
-
-/**
- * Study Guide Sections
- * POST   /api/study-guides/:id/sections     - Add section to study guide
- * PUT    /api/sections/:id                  - Update section
- * DELETE /api/sections/:id                  - Delete section
- * PUT    /api/sections/reorder             - Reorder sections (batch update)
- */
-
-/**
- * Study Guide Questions
- * POST   /api/sections/:id/questions        - Add question to section
- * PUT    /api/questions/:id                 - Update question
- * DELETE /api/questions/:id                 - Delete question
- */
-
-/**
- * Favorites
- * POST   /api/study-guides/:id/favorite     - Favorite a study guide
- * DELETE /api/study-guides/:id/favorite     - Unfavorite a study guide
- * POST   /api/questions/:id/favorite        - Favorite a question
- * DELETE /api/questions/:id/favorite        - Unfavorite a question
- * GET    /api/users/me/favorites           - Get user's favorite guides & questions
- */
-
-/**
- * Tags
- * GET    /api/tags                         - List all tags
- * POST   /api/tags                         - Create new tag
- * GET    /api/study-guides/tags/:tag       - Get study guides by tag
- */
-
-/**
- * Projects
- * POST   /api/projects                     - Create new project
- * GET    /api/projects                     - List all projects
- * GET    /api/projects/:id                 - Get specific project
- * PUT    /api/projects/:id                 - Update project
- * DELETE /api/projects/:id                 - Delete project
- */
-
-/**
- * Search
- * GET    /api/search                       - Search across study guides, questions, and projects
- */

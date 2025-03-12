@@ -1,12 +1,12 @@
 import { Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 import { ConfigModule } from "@nestjs/config";
-import { ProjectsModule } from "./projects/projects.module";
+import { SnippetsModule } from "./snippets/snippets.module";
 
 @Module({
   imports: [
     PassportModule,
-    ProjectsModule,
+    SnippetsModule,
     ConfigModule.forRoot({ isGlobal: true }),
   ], // providers or imports?
 })
