@@ -9,7 +9,7 @@ import {
   Req,
   UseGuards,
 } from "@nestjs/common";
-import { Result } from "src/domain/result";
+import { Result } from "src/common/DTO/result";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { ApiResponse } from "@nestjs/swagger";
 import { PaginatedResult } from "src/common/DTO/Pagination.dto";

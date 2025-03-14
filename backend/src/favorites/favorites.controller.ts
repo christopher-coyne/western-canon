@@ -9,7 +9,7 @@ import {
   Req,
   UseGuards,
 } from "@nestjs/common";
-import { Result } from "src/domain/result";
+import { Result } from "src/common/DTO/result";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { ApiResponse } from "@nestjs/swagger";
 import { PaginatedResult } from "src/common/DTO/Pagination.dto";
@@ -32,7 +32,29 @@ export class FavoritesController {
     console.log("user ", user);
 
     const { items, total, page, pageSize } =
-      await this.favoritesService.getFavoriteSnippets(user, 1, 10);
+      await this.favoritesService.getFavoriteSnippets(user.id, 1, 10);
     return PaginatedResult.ok(items, total, page, pageSize);
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Post("/snippets/:id")
+  async favoriteSnippet(@Req() request, @Param("id") snippetId: string) {
+    const userId = request.user.id;
+    const result = await this.favoritesService.favoriteSnippet(
+      userId,
+      snippetId
+    );
+    return Result.ok(result);
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Delete("/snippets/:id")
+  async unfavoriteSnippet(@Req() request, @Param("id") snippetId: string) {
+    const userId = request.user.id;
+    const result = await this.favoritesService.unfavoriteSnippet(
+      userId,
+      snippetId
+    );
+    return Result.ok(result);
   }
 }

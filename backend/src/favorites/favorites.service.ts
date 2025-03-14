@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
@@ -25,5 +25,36 @@ export class FavoritesService {
       page,
       pageSize,
     };
+  }
+
+  async favoriteSnippet(userId: string, snippetId: string) {
+    // First check if snippet exists
+    const snippet = await this.prismaService.snippet.findUnique({
+      where: { id: snippetId },
+    });
+
+    if (!snippet) {
+      throw new NotFoundException("Snippet not found");
+    }
+
+    // Create favorite
+    return this.prismaService.favorite.create({
+      data: {
+        userId,
+        snippetId,
+      },
+    });
+  }
+
+  async unfavoriteSnippet(userId: string, snippetId: string) {
+    // Delete favorite
+    return this.prismaService.favorite.delete({
+      where: {
+        userId_snippetId: {
+          userId,
+          snippetId,
+        },
+      },
+    });
   }
 }

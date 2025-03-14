@@ -9,12 +9,13 @@ import {
   Req,
   UseGuards,
 } from "@nestjs/common";
-import { Result } from "src/domain/result";
+import { Result } from "src/common/DTO/result";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { ApiResponse } from "@nestjs/swagger";
 import { PaginatedResult } from "src/common/DTO/Pagination.dto";
 import { SnippetDto } from "./DTO/response/snippet.dto";
 import { SnippetsService } from "./snippets.service";
+import { GetSnippetsDto } from "./DTO/request/get-snippets.dto";
 
 /*
     id        String     @id @default(uuid())
@@ -38,9 +39,9 @@ export class SnippetsController {
     isArray: true,
   })
   @Get("/")
-  async getSnippets() {
+  async getSnippets(@Query() query: GetSnippetsDto) {
     const { items, total, page, pageSize } =
-      await this.snippetsService.getSnippets(1, 10);
+      await this.snippetsService.getSnippets(query.page, query.pageSize);
     return PaginatedResult.ok(items, total, page, pageSize);
   }
 }

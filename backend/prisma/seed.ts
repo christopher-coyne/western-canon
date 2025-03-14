@@ -1,4 +1,8 @@
 import { PrismaClient, Role } from "@prisma/client";
+import { seedAuthors } from "./seeds/authors";
+import { seedWorks } from "./seeds/works";
+import { seedSnippets } from "./seeds/snippets";
+
 const prisma = new PrismaClient();
 
 /*
@@ -15,9 +19,7 @@ model User {
 }
   */
 async function main() {
-  // Your seed data here
-
-  // user
+  // Create test user
   const user1 = await prisma.user.create({
     data: {
       email: "james@gmail.com",
@@ -27,47 +29,22 @@ async function main() {
       role: Role.ADMIN,
     },
   });
+  console.log("Created user: ", user1.name);
 
-  // insert test author
-  const author1 = await prisma.author.create({
-    data: {
-      name: "William Shakespeare",
-      intro: "william shakespeare was a...",
-    },
-  });
+  // Seed authors
+  console.log("Seeding authors...");
+  const authors = await seedAuthors();
+  console.log(`Created ${authors.length} authors`);
 
-  /*
-    id           String     @id @default(uuid())
-  title        String
-  introduction String     @db.Text
-  pageCount    Int?
-  publishYear  Int?
-  authorId     String
-  */
-  const work1 = await prisma.work.create({
-    data: {
-      title: "Hamlet",
-      introduction: "Hamlet tells the story of...",
-      pageCount: 200,
-      publishYear: 1623,
-      authorId: author1.id,
-    },
-  });
+  // Seed works
+  console.log("Seeding works...");
+  const works = await seedWorks(authors);
+  console.log(`Created ${works.length} works`);
 
-  /*
-    content   String     @db.Text
-  analysis  String?    @db.Text
-  workId    String
-  */
-  const snippet = await prisma.snippet.create({
-    data: {
-      content: "to be or not to be...",
-      analysis: "this passage shows the ....",
-      workId: work1.id,
-    },
-  });
-
-  console.log("created user: ", user1.name);
+  // Seed snippets
+  console.log("Seeding snippets...");
+  const snippets = await seedSnippets(works);
+  console.log(`Created ${snippets.length} snippets`);
 }
 
 main()
