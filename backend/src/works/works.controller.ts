@@ -15,6 +15,7 @@ import { ApiResponse } from "@nestjs/swagger";
 import { PaginatedResult } from "src/common/DTO/Pagination.dto";
 import { WorksService } from "./works.service";
 import { WorkDto } from "./DTO/response/works.dto";
+import { GetWorksDto } from "./DTO/request/get-works.dto";
 
 /*
     id        String     @id @default(uuid())
@@ -38,10 +39,10 @@ export class WorksController {
     isArray: true,
   })
   @Get("/")
-  async getWorks() {
+  async getWorks(@Query() query: GetWorksDto) {
     const { items, total, page, pageSize } = await this.worksService.getWorks(
-      1,
-      10
+      query.page,
+      query.pageSize
     );
     return PaginatedResult.ok(items, total, page, pageSize);
   }
