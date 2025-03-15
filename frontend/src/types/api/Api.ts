@@ -9,17 +9,28 @@
  * ---------------------------------------------------------------
  */
 
-export interface SnippetDto {
+export interface AuthorDto {
   id: string;
-  content: string;
-  analysis?: object;
-  workId: string;
+  name: string;
+  birthYear?: object;
+  birthYearApprox: boolean;
+  deathYear?: object;
+  intro: string;
   /** @format date-time */
   createdAt: string;
   /** @format date-time */
   updatedAt: string;
   /** @format date-time */
   deletedAt?: string;
+  works: WorkDto[];
+}
+
+export interface GenreDto {
+  name: string;
+}
+
+export interface WorkGenreDto {
+  genre: GenreDto;
 }
 
 export interface WorkDto {
@@ -35,6 +46,22 @@ export interface WorkDto {
   updatedAt: string;
   /** @format date-time */
   deletedAt?: string;
+  author: AuthorDto;
+  genres: WorkGenreDto[];
+}
+
+export interface SnippetDto {
+  id: string;
+  content: string;
+  analysis?: object;
+  workId: string;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  /** @format date-time */
+  deletedAt?: string;
+  work: WorkDto;
 }
 
 export type QueryParamsType = Record<string | number, any>;

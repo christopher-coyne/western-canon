@@ -14,6 +14,18 @@ export class SnippetsService {
       this.prismaService.snippet.findMany({
         skip: (page - 1) * pageSize,
         take: pageSize,
+        include: {
+          work: {
+            include: {
+              author: true,
+              genres: {
+                include: {
+                  genre: true,
+                },
+              },
+            },
+          },
+        },
       }),
       this.prismaService.snippet.count(),
     ]);

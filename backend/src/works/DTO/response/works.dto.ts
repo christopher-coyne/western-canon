@@ -1,25 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import { IsDate, IsNotEmpty, IsNumber, IsString } from "class-validator";
-/*
-model Work {
-  id           String     @id @default(uuid())
-  title        String
-  introduction String     @db.Text
-  pageCount    Int?
-  publishYear  Int?
-  authorId     String
+import { AuthorDto } from "src/author/DTO/response/authors.dto";
+import { WorkGenreDto } from "./work-genre.dto";
 
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  deletedAt DateTime?
-
-  author       Author     @relation(fields: [authorId], references: [id])
-  snippets     Snippet[]
-  genres       WorkGenre[]
-  
-  @@map("works")
-}
-  */
 export class WorkDto {
   @ApiProperty()
   @IsString()
@@ -63,6 +47,11 @@ export class WorkDto {
   @IsDate()
   deletedAt: Date;
 
-  /*
-  work, favorites */
+  @ApiProperty({ type: () => AuthorDto })
+  @Type(() => AuthorDto)
+  author: AuthorDto;
+
+  @ApiProperty({ type: () => [WorkGenreDto] })
+  @Type(() => WorkGenreDto)
+  genres: WorkGenreDto[];
 }

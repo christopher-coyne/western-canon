@@ -48,9 +48,9 @@ export class SnippetDto {
   @IsDate()
   deletedAt: Date;
 
-  /*
-  work, favorites */
   @ApiProperty({ type: () => WorkDto })
   @Type(() => WorkDto)
   work: WorkDto;
+  /*
+  work, favorites */
 }
