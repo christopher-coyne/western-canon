@@ -9,45 +9,32 @@
  * ---------------------------------------------------------------
  */
 
-export interface UserDto {
-  /** Unique user identifier */
+export interface SnippetDto {
   id: string;
-  /** User email address */
-  email: string;
-  /** User display name */
-  name?: object;
-  /**
-   * User role
-   * @default "USER"
-   */
-  role: "USER" | "ADMIN";
-  /**
-   * User creation timestamp
-   * @format date-time
-   */
-  createdAt: string;
-  /**
-   * User last update timestamp
-   * @format date-time
-   */
-  updatedAt: string;
-}
-
-export interface ProjectEntity {
-  id: string;
-  title: string;
-  description: string;
-  creator: UserDto;
-  creatorId: string;
+  content: string;
+  analysis?: object;
+  workId: string;
   /** @format date-time */
   createdAt: string;
   /** @format date-time */
   updatedAt: string;
+  /** @format date-time */
+  deletedAt?: string;
 }
 
-export interface CreateProjectDto {
+export interface WorkDto {
+  id: string;
   title: string;
-  description: string;
+  introductions: string;
+  pageCount?: object;
+  publishYear?: object;
+  authorId: string;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  /** @format date-time */
+  deletedAt?: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -304,75 +291,62 @@ export class HttpClient<SecurityDataType = unknown> {
 export class Api<
   SecurityDataType extends unknown,
 > extends HttpClient<SecurityDataType> {
-  projects = {
+  snippets = {
     /**
      * No description
      *
-     * @tags Projects
-     * @name ProjectsControllerGetProjects
-     * @request GET:/projects
+     * @tags Snippets
+     * @name SnippetsControllerGetSnippets
+     * @request GET:/snippets
      */
-    projectsControllerGetProjects: (
+    snippetsControllerGetSnippets: (
       query?: {
         /**
-         * Page number for pagination
+         * Page number (starts from 1)
          * @default 1
          */
         page?: number;
-        /** Search query string */
-        query?: string;
         /**
-         * Filter by difficulties (comma-separated)
-         * @example "beginner,intermediate"
+         * Number of items per page
+         * @default 12
          */
-        difficulties?: string;
-        /**
-         * Filter by tag IDs (comma-separated)
-         * @example "1,2,3"
-         */
-        tags?: string;
+        pageSize?: number;
       },
       params: RequestParams = {}
     ) =>
-      this.request<any, ProjectEntity[]>({
-        path: `/projects`,
+      this.request<any, SnippetDto[]>({
+        path: `/snippets`,
         method: "GET",
         query: query,
         ...params,
       }),
-
+  };
+  feed = {
     /**
      * No description
      *
-     * @tags Projects
-     * @name ProjectsControllerCreateProject
-     * @request POST:/projects
+     * @tags Feed
+     * @name FeedControllerGetFeed
+     * @request GET:/feed
      */
-    projectsControllerCreateProject: (
-      data: CreateProjectDto,
-      params: RequestParams = {}
-    ) =>
-      this.request<void, any>({
-        path: `/projects`,
-        method: "POST",
-        body: data,
-        type: ContentType.Json,
+    feedControllerGetFeed: (params: RequestParams = {}) =>
+      this.request<any, SnippetDto[]>({
+        path: `/feed`,
+        method: "GET",
         ...params,
       }),
-
+  };
+  favorites = {
     /**
      * No description
      *
-     * @tags Projects
-     * @name ProjectsControllerGetProjectById
-     * @request GET:/projects/{id}
+     * @tags Favorites
+     * @name FavoritesControllerGetFeed
+     * @request GET:/favorites
      */
-    projectsControllerGetProjectById: (
-      id: string,
-      params: RequestParams = {}
-    ) =>
-      this.request<void, any>({
-        path: `/projects/${id}`,
+    favoritesControllerGetFeed: (params: RequestParams = {}) =>
+      this.request<any, SnippetDto[]>({
+        path: `/favorites`,
         method: "GET",
         ...params,
       }),
@@ -380,34 +354,64 @@ export class Api<
     /**
      * No description
      *
-     * @tags Projects
-     * @name ProjectsControllerDeleteProject
-     * @request DELETE:/projects/{id}
+     * @tags Favorites
+     * @name FavoritesControllerFavoriteSnippet
+     * @request POST:/favorites/snippets/{id}
      */
-    projectsControllerDeleteProject: (id: string, params: RequestParams = {}) =>
+    favoritesControllerFavoriteSnippet: (
+      id: string,
+      params: RequestParams = {}
+    ) =>
       this.request<void, any>({
-        path: `/projects/${id}`,
-        method: "DELETE",
+        path: `/favorites/snippets/${id}`,
+        method: "POST",
         ...params,
       }),
 
     /**
      * No description
      *
-     * @tags Projects
-     * @name ProjectsControllerUpdateProject
-     * @request POST:/projects/{id}
+     * @tags Favorites
+     * @name FavoritesControllerUnfavoriteSnippet
+     * @request DELETE:/favorites/snippets/{id}
      */
-    projectsControllerUpdateProject: (
+    favoritesControllerUnfavoriteSnippet: (
       id: string,
-      data: CreateProjectDto,
       params: RequestParams = {}
     ) =>
       this.request<void, any>({
-        path: `/projects/${id}`,
-        method: "POST",
-        body: data,
-        type: ContentType.Json,
+        path: `/favorites/snippets/${id}`,
+        method: "DELETE",
+        ...params,
+      }),
+  };
+  works = {
+    /**
+     * No description
+     *
+     * @tags Works
+     * @name WorksControllerGetWorks
+     * @request GET:/works
+     */
+    worksControllerGetWorks: (
+      query?: {
+        /**
+         * Page number (starts from 1)
+         * @default 1
+         */
+        page?: number;
+        /**
+         * Number of items per page
+         * @default 12
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<any, WorkDto[]>({
+        path: `/works`,
+        method: "GET",
+        query: query,
         ...params,
       }),
   };

@@ -1,21 +1,17 @@
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "./app-sidebar";
+import { ReactNode } from "react";
+import { AppNavbar } from "./app-navbar";
 
 type MainLayoutProps = {
-  children: any;
+  children: ReactNode;
 };
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <SidebarProvider>
-      <div className="w-full border-2 border-red-500 flex flex-between">
-        {/* sidebar */}
-        <AppSidebar />
-        <div className="px-4 w-full">
-          {children}
-        </div>
-
-      </div>
-    </SidebarProvider>
-  )
-}
+    <div className="h-screen flex flex-col bg-background border-2 border-green-400">
+      <AppNavbar />
+      <main className="w-[80%] h-full flex-grow-1 py-6 m-auto border-2 border-blue-400 overflow-scroll">
+        {children}
+      </main>
+    </div>
+  );
+};
