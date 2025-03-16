@@ -1,14 +1,14 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Homepage } from "./routes/homepage";
 import { AllProjects } from "./routes/projects/all-projects";
 import { Project } from "./routes/projects/project";
 import { Feed } from "./routes/feed/feed";
 import { Explore } from "./routes/explore/explore";
+import { FavoriteSnippets } from "./routes/favorites/favorite-snippets";
 
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Homepage />,
+    path: "/", // Dynamic route with ID parameter
+    element: <Feed />,
   },
   {
     path: "/test",
@@ -23,12 +23,12 @@ export const router = createBrowserRouter([
     element: <AllProjects />,
   },
   {
-    path: "/projects/:id", // Dynamic route with ID parameter
-    element: <Project />,
+    path: "/favorites",
+    element: <FavoriteSnippets />,
   },
   {
-    path: "/feed", // Dynamic route with ID parameter
-    element: <Feed />,
+    path: "/projects/:id", // Dynamic route with ID parameter
+    element: <Project />,
   },
 ]);
 

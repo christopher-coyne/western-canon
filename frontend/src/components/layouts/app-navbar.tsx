@@ -29,10 +29,10 @@ export function AppNavbar() {
       active: location.pathname === "/explore",
     },
     {
-      label: "Feed",
-      href: "/feed",
+      label: "Favorites",
+      href: "/favorites",
       icon: Heart,
-      active: location.pathname === "/feed",
+      active: location.pathname === "/favorites",
     },
     {
       label: "Profile",

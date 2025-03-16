@@ -41,7 +41,11 @@ export class SnippetsController {
   @Get("/")
   async getSnippets(@Query() query: GetSnippetsDto) {
     const { items, total, page, pageSize } =
-      await this.snippetsService.getSnippets(query.page, query.pageSize);
+      await this.snippetsService.getSnippets(
+        query.page,
+        query.pageSize,
+        query.query
+      );
     return PaginatedResult.ok(items, total, page, pageSize);
   }
 }

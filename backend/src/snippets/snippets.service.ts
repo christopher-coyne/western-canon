@@ -9,11 +9,17 @@ import { PrismaService } from "src/prisma/prisma.service";
 export class SnippetsService {
   constructor(private prismaService: PrismaService) {}
 
-  async getSnippets(page = 1, pageSize = 10) {
+  async getSnippets(page = 1, pageSize = 10, query?: string) {
     const [items, total] = await Promise.all([
       this.prismaService.snippet.findMany({
         skip: (page - 1) * pageSize,
         take: pageSize,
+        where: {
+          content: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
         include: {
           work: {
             include: {

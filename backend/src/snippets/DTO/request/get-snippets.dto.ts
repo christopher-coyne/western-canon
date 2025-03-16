@@ -8,4 +8,9 @@ export class GetSnippetsDto extends PaginationQueryDto {
   //   description: "Filter snippets by work ID",
   // })
   // workId?: string;
+
+  @ApiPropertyOptional({
+    description: "Filter snippets by query",
+  })
+  query?: string;
 }
