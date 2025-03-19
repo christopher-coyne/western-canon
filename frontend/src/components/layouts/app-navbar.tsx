@@ -6,14 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/app/auth-provider";
 
 export function AppNavbar() {
   const location = useLocation();
   const [sheetOpen, setSheetOpen] = useState(false);
-
-  const handleSignIn = () => {
-    console.log("Sign in clicked - implement auth later");
-  };
+  const { openSignUp, openSignIn } = useAuth();
 
   const navItems = [
     {
@@ -105,7 +103,10 @@ export function AppNavbar() {
         </Sheet>
 
         <div className="ml-auto flex items-center space-x-4">
-          <Button onClick={handleSignIn}>Sign In</Button>
+          <Button onClick={openSignIn}>Sign In</Button>
+          <Button onClick={openSignUp} variant="default">
+            Sign Up
+          </Button>
         </div>
       </div>
     </header>
