@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useInfiniteQuery } from "@tanstack/react-query";
 import { SnippetDto } from "@/types/api/Api";
 
 import { api } from "@/lib/api-client";
@@ -16,6 +16,7 @@ type PaginatedResponse<T> = {
 
 export const getSnippets = (
   page = 1,
+  pageSize = 5,
   tags: string[],
   query?: string
 ): Promise<PaginatedResponse<SnippetDto>> => {
@@ -23,6 +24,7 @@ export const getSnippets = (
     .get("/snippets", {
       params: {
         page,
+        pageSize,
         query,
         tags: tags.join(""),
       },
@@ -34,38 +36,41 @@ export const getSnippets = (
     }));
 };
 
+type SnippetsQueryKey = ["snippets", { query?: string; tags: string[] }];
+
 export const getSnippetsQueryOptions = (
   {
-    page,
     query,
     tags,
   }: {
-    page?: number;
     query?: string;
     tags: string[];
   } = { tags: [] }
 ) => {
-  return queryOptions({
-    queryKey: ["snippets", { page, query, tags }],
-    queryFn: () => getSnippets(page, tags, query),
-  });
+  return {
+    queryKey: ["snippets", { query, tags }] as const,
+    queryFn: ({ pageParam = 1 }) => getSnippets(pageParam, 5, tags, query),
+    getNextPageParam: (lastPage: PaginatedResponse<SnippetDto>) => {
+      const hasNextPage =
+        lastPage.pagination.page < Math.ceil(lastPage.pagination.total / 5);
+      return hasNextPage ? lastPage.pagination.page + 1 : undefined;
+    },
+  };
 };
 
 type UseSnippetsOptions = {
-  page?: number;
   query?: string;
   tags: string[];
-  queryConfig?: QueryConfig<typeof getSnippetsQueryOptions>;
+  queryConfig?: Partial<ReturnType<typeof getSnippetsQueryOptions>>;
 };
 
 export const useGetSnippets = ({
   queryConfig,
-  page,
   query,
   tags,
 }: UseSnippetsOptions) => {
-  return useQuery({
-    ...getSnippetsQueryOptions({ page, query, tags }),
+  return useInfiniteQuery({
+    ...getSnippetsQueryOptions({ query, tags }),
     ...queryConfig,
   });
 };

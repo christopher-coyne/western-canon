@@ -78,6 +78,78 @@ export async function seedSnippets(works: any[]) {
         "This quote reveals Pip's moral struggle and self-awareness, central themes in the novel.",
       workId: workMap.get("Great Expectations"),
     },
+    // Emma snippets
+    {
+      content:
+        "Emma Woodhouse, handsome, clever, and rich, with a comfortable home and happy disposition, seemed to unite some of the best blessings of existence; and had lived nearly twenty-one years in the world with very little to distress or vex her.",
+      analysis:
+        "The opening lines perfectly establish Emma's privileged position and hint at her lack of real-world experience, setting up the novel's exploration of her character growth.",
+      workId: workMap.get("Emma"),
+    },
+    // Sense and Sensibility snippets
+    {
+      content:
+        "The more I know of the world, the more I am convinced that I shall never see a man whom I can really love. I require so much!",
+      analysis:
+        "Marianne's romantic idealism contrasts with her sister's pragmatism, highlighting the novel's central tension between sense and sensibility.",
+      workId: workMap.get("Sense and Sensibility"),
+    },
+    // The Trial snippets
+    {
+      content:
+        "Someone must have slandered Josef K., for one morning, without having done anything truly wrong, he was arrested.",
+      analysis:
+        "The opening line introduces the novel's themes of bureaucratic oppression and arbitrary justice.",
+      workId: workMap.get("The Trial"),
+    },
+    // Love in the Time of Cholera snippets
+    {
+      content:
+        "He allowed himself to be swayed by his conviction that human beings are not born once and for all on the day their mothers give birth to them, but that life obliges them over and over again to give birth to themselves.",
+      analysis:
+        "This passage reflects the novel's theme of love's capacity for renewal and transformation over time.",
+      workId: workMap.get("Love in the Time of Cholera"),
+    },
+    // To the Lighthouse snippets
+    {
+      content:
+        "For now she need not think about anybody. She could be herself, by herself. And that was what now she often felt the need of - to think; well, not even to think. To be silent; to be alone.",
+      analysis:
+        "This excerpt captures Mrs. Ramsay's interior life and the novel's exploration of consciousness and solitude.",
+      workId: workMap.get("To the Lighthouse"),
+    },
+    // Orlando snippets
+    {
+      content:
+        "As long as she thinks of a man, nobody objects to a woman thinking.",
+      analysis:
+        "This ironic observation highlights the novel's critique of gender roles and societal expectations.",
+      workId: workMap.get("Orlando: A Biography"),
+    },
+    // The Castle snippets
+    {
+      content:
+        "It was late evening when K. arrived. The village lay deep in snow. The Castle hill was hidden, veiled in mist and darkness, nor was there even a glimmer of light to show that a castle was there.",
+      analysis:
+        "The opening sets the mysterious and oppressive atmosphere that pervades the entire novel.",
+      workId: workMap.get("The Castle"),
+    },
+    // A Tale of Two Cities snippets
+    {
+      content:
+        "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness...",
+      analysis:
+        "The famous opening lines establish the novel's central theme of duality and the contrasting nature of the historical period.",
+      workId: workMap.get("A Tale of Two Cities"),
+    },
+    // Chronicle of a Death Foretold snippets
+    {
+      content:
+        "On the day they were going to kill him, Santiago Nasar got up at five-thirty in the morning to wait for the boat the bishop was coming on.",
+      analysis:
+        "The opening line exemplifies García Márquez's technique of revealing the outcome immediately while maintaining suspense through the details.",
+      workId: workMap.get("Chronicle of a Death Foretold"),
+    },
   ];
 
   const createdSnippets = await prisma.snippet.createMany({

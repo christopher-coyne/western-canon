@@ -8,11 +8,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Filter, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ExploreCard } from "./explore-card";
 import { useGetSnippets } from "../api/view-all-snippets";
 import { SnippetDto } from "@/types/api/Api";
 import SnippetInfoModal from "./snippet-info-modal";
+import { useInView } from "react-intersection-observer";
+import { useSearchParams } from "react-router-dom";
 
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -32,7 +34,6 @@ const useDebounce = (value: string, delay: number) => {
 
 export const ViewExplore = () => {
   // Extract unique genres for filter
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedQuery = useDebounce(searchQuery, 500);
   const [genreFilter, setGenreFilter] = useState<string | null>(null);
@@ -41,8 +42,46 @@ export const ViewExplore = () => {
   );
   const [showFilters, setShowFilters] = useState(false);
 
-  const { data } = useGetSnippets({ page: 1, query: debouncedQuery, tags: [] });
+  const observerRef = useRef(null);
+
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  } = useGetSnippets({ query: debouncedQuery, tags: [] });
   console.log("GET SNIPPETS DATA ", data);
+
+  /*
+  const handleObserver = useCallback(
+    (entries: any) => {
+      const [entry] = entries;
+      console.log("ENTRY ", entry);
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
+  );
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, {
+      rootMargin: "0px 0px 200px 0px", // Load more when within 200px of the bottom
+    });
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [handleObserver]);
+  */
 
   console.log("SELECTED SNIPPET ", selectedSnippet);
   return (
@@ -71,7 +110,7 @@ export const ViewExplore = () => {
           </Button>
 
           <span className="text-sm text-muted-foreground">
-            {data?.pagination.total} results
+            {data?.pages[0].pagination.total} results
           </span>
         </div>
 
@@ -96,20 +135,25 @@ export const ViewExplore = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {data?.items.map((snippet) => (
-          <ExploreCard
-            key={snippet.id}
-            snippet={snippet}
-            onClick={() => setSelectedSnippet(snippet)}
-          />
-        ))}
+        {data?.pages
+          .flatMap((page) => page.items)
+          .map((snippet) => (
+            <ExploreCard
+              key={snippet.id}
+              snippet={snippet}
+              onClick={() => setSelectedSnippet(snippet)}
+            />
+          ))}
 
-        {data?.items.length === 0 && (
+        {data?.pages.flatMap((page) => page.items).length === 0 && (
           <div className="col-span-full text-center py-12 text-muted-foreground">
             No results found. Try adjusting your search or filters.
           </div>
         )}
       </div>
+
+      <button onClick={() => fetchNextPage()}>infinite scroll...</button>
+      {/* <div ref={observerRef} className="h-10 border-2 border-red-500"></div> */}
 
       {selectedSnippet && (
         <SnippetInfoModal
