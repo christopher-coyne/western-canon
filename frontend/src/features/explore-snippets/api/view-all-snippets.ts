@@ -1,8 +1,7 @@
-import { queryOptions, useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { SnippetDto } from "@/types/api/Api";
 
 import { api } from "@/lib/api-client";
-import { QueryConfig } from "@/lib/react-query";
 
 type PaginatedResponse<T> = {
   items: T[];
@@ -20,6 +19,7 @@ export const getSnippets = (
   tags: string[],
   query?: string
 ): Promise<PaginatedResponse<SnippetDto>> => {
+  console.log("sending with query ", query);
   return api
     .get("/snippets", {
       params: {
@@ -35,8 +35,6 @@ export const getSnippets = (
       pagination: response.data.pagination,
     }));
 };
-
-type SnippetsQueryKey = ["snippets", { query?: string; tags: string[] }];
 
 export const getSnippetsQueryOptions = (
   {
@@ -72,5 +70,6 @@ export const useGetSnippets = ({
   return useInfiniteQuery({
     ...getSnippetsQueryOptions({ query, tags }),
     ...queryConfig,
+    initialPageParam: 1,
   });
 };

@@ -1,4 +1,5 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
+import { IsOptional, IsString } from "class-validator";
 import { PaginationQueryDto } from "src/common/DTO/Pagination.dto";
 
 export class GetSnippetsDto extends PaginationQueryDto {
@@ -12,5 +13,7 @@ export class GetSnippetsDto extends PaginationQueryDto {
   @ApiPropertyOptional({
     description: "Filter snippets by query",
   })
+  @IsOptional()
+  @IsString()
   query?: string;
 }

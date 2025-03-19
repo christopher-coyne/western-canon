@@ -54,7 +54,6 @@ export const ViewExplore = () => {
   } = useGetSnippets({ query: debouncedQuery, tags: [] });
   console.log("GET SNIPPETS DATA ", data);
 
-  /*
   const handleObserver = useCallback(
     (entries: any) => {
       const [entry] = entries;
@@ -81,7 +80,6 @@ export const ViewExplore = () => {
       }
     };
   }, [handleObserver]);
-  */
 
   console.log("SELECTED SNIPPET ", selectedSnippet);
   return (
@@ -91,7 +89,7 @@ export const ViewExplore = () => {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Search by title, author, or content..."
+            placeholder="Search by title or author"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -152,8 +150,8 @@ export const ViewExplore = () => {
         )}
       </div>
 
-      <button onClick={() => fetchNextPage()}>infinite scroll...</button>
-      {/* <div ref={observerRef} className="h-10 border-2 border-red-500"></div> */}
+      {/* <button onClick={() => fetchNextPage()}>infinite scroll...</button> */}
+      <div ref={observerRef} className="h-10 border-2 border-red-500"></div>
 
       {selectedSnippet && (
         <SnippetInfoModal

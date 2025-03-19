@@ -150,6 +150,75 @@ export async function seedSnippets(works: any[]) {
         "The opening line exemplifies García Márquez's technique of revealing the outcome immediately while maintaining suspense through the details.",
       workId: workMap.get("Chronicle of a Death Foretold"),
     },
+    // Oliver Twist snippets
+    {
+      content: "Please, sir, I want some more.",
+      analysis:
+        "This simple but powerful line captures both Oliver's innocence and the novel's critique of Victorian workhouse conditions and social inequality.",
+      workId: workMap.get("Oliver Twist"),
+    },
+    // More from Pride and Prejudice
+    {
+      content: "Till this moment I never knew myself.",
+      analysis:
+        "Elizabeth's moment of self-realization, showing how prejudice had clouded her judgment and highlighting the novel's theme of self-discovery.",
+      workId: workMap.get("Pride and Prejudice"),
+    },
+    // More from The Trial
+    {
+      content:
+        "Logic may indeed be unshakeable, but it cannot withstand a man who is determined to live.",
+      analysis:
+        "This quote emphasizes the conflict between bureaucratic rationality and human will to survive, a central theme in the novel.",
+      workId: workMap.get("The Trial"),
+    },
+    // More from Emma
+    {
+      content:
+        "I cannot make speeches, Emma. If I loved you less, I might be able to talk about it more.",
+      analysis:
+        "Mr. Knightley's declaration of love shows true feeling triumphing over social artifice, a contrast to Emma's earlier matchmaking schemes.",
+      workId: workMap.get("Emma"),
+    },
+    // More from One Hundred Years of Solitude
+    {
+      content:
+        "He really had been through death, but he had returned because he could not bear the solitude.",
+      analysis:
+        "This quote exemplifies the novel's magical realism while exploring its central themes of solitude and the power of human connection.",
+      workId: workMap.get("One Hundred Years of Solitude"),
+    },
+    // More from To the Lighthouse
+    {
+      content:
+        "What is the meaning of life? That was all—a simple question; one that tended to close in on one with years.",
+      analysis:
+        "This passage reflects the novel's modernist preoccupation with existential questions and the search for meaning in everyday life.",
+      workId: workMap.get("To the Lighthouse"),
+    },
+    // More from A Tale of Two Cities
+    {
+      content:
+        "I see a beautiful city and a brilliant people rising from this abyss. I see the lives for which I lay down my life, peaceful, useful, prosperous and happy.",
+      analysis:
+        "Sydney Carton's final thoughts before his sacrifice, embodying the novel's themes of resurrection and redemption through sacrifice.",
+      workId: workMap.get("A Tale of Two Cities"),
+    },
+    // More from Love in the Time of Cholera
+    {
+      content: "The only regret I will have in dying is if it is not for love.",
+      analysis:
+        "This quote encapsulates the novel's central theme of love's supreme importance and its power to give life meaning.",
+      workId: workMap.get("Love in the Time of Cholera"),
+    },
+    // More from Mrs Dalloway
+    {
+      content:
+        "Did it matter then, she asked herself, walking towards Bond Street, did it matter that she must inevitably cease completely? All this must go on without her; did she resent it; or did it not become consoling to believe that death ended absolutely?",
+      analysis:
+        "This passage explores Clarissa's contemplation of mortality and the meaning of existence, central themes in the novel.",
+      workId: workMap.get("Mrs Dalloway"),
+    },
   ];
 
   const createdSnippets = await prisma.snippet.createMany({

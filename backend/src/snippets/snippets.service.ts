@@ -10,6 +10,7 @@ export class SnippetsService {
   constructor(private prismaService: PrismaService) {}
 
   async getSnippets(page = 1, pageSize = 10, query?: string) {
+    console.log("query", query);
     const [items, total] = await Promise.all([
       this.prismaService.snippet.findMany({
         skip: (page - 1) * pageSize,
