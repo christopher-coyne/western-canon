@@ -1,7 +1,8 @@
-import Axios from 'axios';
+import Axios from "axios";
 
-import { env } from '@/config/env';
+import { env } from "@/config/env";
 
 export const api = Axios.create({
-    baseURL: env.API_URL,
+  baseURL: env.API_URL,
+  withCredentials: true,
 });

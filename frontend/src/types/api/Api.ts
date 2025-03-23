@@ -9,6 +9,68 @@
  * ---------------------------------------------------------------
  */
 
+export interface SignUpDto {
+  /**
+   * User's email address
+   * @example "user@example.com"
+   */
+  email: string;
+  /**
+   * User's display name
+   * @example "John Doe"
+   */
+  name: string;
+  /**
+   * User's password
+   * @example "StrongP@ss123"
+   */
+  password: string;
+}
+
+export interface UserProfileDto {
+  /**
+   * The unique identifier of the user
+   * @example "123e4567-e89b-12d3-a456-426614174000"
+   */
+  id: string;
+  /**
+   * User's email address
+   * @example "john.doe@example.com"
+   */
+  email: string;
+  /**
+   * User's display name
+   * @example "John Doe"
+   */
+  name: string;
+  /**
+   * User's role in the system
+   * @example "USER"
+   */
+  role: "USER" | "ADMIN";
+  /**
+   * Number of consecutive days the user has been active
+   * @example 5
+   */
+  dayStreak: number;
+  /**
+   * Last time the user was active
+   * @example "2024-03-12T10:30:00Z"
+   */
+  lastActive: object;
+  /**
+   * When the user account was created
+   * @format date-time
+   * @example "2024-01-01T00:00:00Z"
+   */
+  createdAt: string;
+  /**
+   * Total number of snippets favorited by the user
+   * @example 42
+   */
+  favoriteCount: number;
+}
+
 export interface AuthorDto {
   id: string;
   name: string;
@@ -62,6 +124,12 @@ export interface SnippetDto {
   /** @format date-time */
   deletedAt?: string;
   work: WorkDto;
+}
+
+export interface FavoriteSnippetDto {
+  /** @format date-time */
+  createdAt: string;
+  snippet: SnippetDto;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -318,6 +386,81 @@ export class HttpClient<SecurityDataType = unknown> {
 export class Api<
   SecurityDataType extends unknown,
 > extends HttpClient<SecurityDataType> {
+  auth = {
+    /**
+     * No description
+     *
+     * @tags auth
+     * @name AuthControllerSignUp
+     * @request POST:/auth/signup
+     */
+    authControllerSignUp: (data: SignUpDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/auth/signup`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags auth
+     * @name AuthControllerLogin
+     * @request POST:/auth/login
+     */
+    authControllerLogin: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/auth/login`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags auth
+     * @name AuthControllerLogout
+     * @summary Log out the current user
+     * @request POST:/auth/logout
+     */
+    authControllerLogout: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/auth/logout`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags auth
+     * @name AuthControllerProfile
+     * @request GET:/auth/profile
+     */
+    authControllerProfile: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/auth/profile`,
+        method: "GET",
+        ...params,
+      }),
+  };
+  users = {
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name UsersControllerGetProfile
+     * @request GET:/users/profile
+     */
+    usersControllerGetProfile: (params: RequestParams = {}) =>
+      this.request<any, UserProfileDto>({
+        path: `/users/profile`,
+        method: "GET",
+        ...params,
+      }),
+  };
   snippets = {
     /**
      * No description
@@ -338,6 +481,8 @@ export class Api<
          * @default 12
          */
         pageSize?: number;
+        /** Filter snippets by query */
+        query?: string;
       },
       params: RequestParams = {}
     ) =>
@@ -372,7 +517,7 @@ export class Api<
      * @request GET:/favorites
      */
     favoritesControllerGetFeed: (params: RequestParams = {}) =>
-      this.request<any, SnippetDto[]>({
+      this.request<any, FavoriteSnippetDto[]>({
         path: `/favorites`,
         method: "GET",
         ...params,

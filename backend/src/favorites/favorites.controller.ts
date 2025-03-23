@@ -16,18 +16,19 @@ import { PaginatedResult } from "src/common/DTO/Pagination.dto";
 import { SnippetDto } from "src/snippets/DTO/response/snippet.dto";
 import { FavoritesService } from "./favorites.service";
 import { LocalAuthGuard } from "src/auth/localAuthenticated.guard";
+import { FavoriteSnippetDto } from "./DTO/response/favorite-snippet";
 
 @Controller("/favorites")
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
   @ApiResponse({
-    type: SnippetDto,
+    type: FavoriteSnippetDto,
     isArray: true,
   })
   @UseGuards(AuthenticatedGuard)
   @Get("/")
-  async getFeed(@Req() request) {
+  async getFavoriteSnippets(@Req() request) {
     const user = request.user;
     console.log("user ", user);
 

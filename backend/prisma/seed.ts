@@ -168,6 +168,15 @@ async function main() {
     }
   }
 
+  await prisma.user.create({
+    data: {
+      email: "alexjohnson@gmail.com",
+      name: "Alex",
+      password: "$2b$10$qudZ6M/R7M31fIHC9Qn9xentyMgxoZeuNRY1PJKC48XqYtFvTM7f.", // "MyPassword123!"
+      role: Role.ADMIN,
+    },
+  });
+
   // Seed snippets
   console.log("Seeding snippets...");
   const snippets = await seedSnippets(works);

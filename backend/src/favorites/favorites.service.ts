@@ -7,16 +7,23 @@ export class FavoritesService {
 
   async getFavoriteSnippets(userId: string, page = 1, pageSize = 10) {
     const [items, total] = await Promise.all([
-      this.prismaService.snippet.findMany({
+      this.prismaService.favorite.findMany({
         skip: (page - 1) * pageSize,
         take: pageSize,
+        where: { userId },
         include: {
-          favorites: {
-            where: { userId: userId },
+          snippet: {
+            include: {
+              work: {
+                include: {
+                  author: true,
+                },
+              },
+            },
           },
         },
       }),
-      this.prismaService.snippet.count(),
+      this.prismaService.favorite.count({ where: { userId } }),
     ]);
 
     return {

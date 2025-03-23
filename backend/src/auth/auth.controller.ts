@@ -5,8 +5,6 @@ import {
   UseGuards,
   Get,
   Body,
-  HttpCode,
-  HttpStatus,
   InternalServerErrorException,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
@@ -41,14 +39,13 @@ export class AuthController {
     });
   }
 
+  @UseGuards(AuthenticatedGuard)
   @ApiOperation({ summary: "Log out the current user" })
   @ApiResponse({
     status: 200,
     description: "User successfully logged out",
   })
-  @UseGuards(AuthenticatedGuard)
   @Post("logout")
-  @HttpCode(HttpStatus.OK)
   async logout(@Request() req) {
     return new Promise((resolve, reject) => {
       req.logout((err) => {
