@@ -5,10 +5,11 @@ import { SnippetsModule } from "./snippets/snippets.module";
 import { FeedModule } from "./feed/feed.module";
 import { FavoritesModule } from "./favorites/favorites.module";
 import { WorksModule } from "./works/works.module";
-
+import { AuthModule } from "./auth/auth.module";
 @Module({
   imports: [
     PassportModule,
+    AuthModule,
     SnippetsModule,
     FeedModule,
     FavoritesModule,

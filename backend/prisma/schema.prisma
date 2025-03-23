@@ -79,6 +79,7 @@ model Snippet {
   content   String     @db.Text
   analysis  String?    @db.Text
   workId    String
+  order     Int        @default(autoincrement()) // way to track which snippets a user has read
 
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt

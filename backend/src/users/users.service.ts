@@ -6,10 +6,10 @@ import { Role } from "@prisma/client";
 export class UsersService {
   constructor(private prismaService: PrismaService) {}
 
-  async findOne(username: string, password: string): Promise<any | undefined> {
+  async findOne(email: string, password: string): Promise<any | undefined> {
     return this.prismaService.user.findFirst({
       where: {
-        name: username,
+        email: email,
         password: password,
       },
     });
