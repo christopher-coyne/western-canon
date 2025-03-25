@@ -71,6 +71,14 @@ export interface UserProfileDto {
   favoriteCount: number;
 }
 
+export interface UpdateCursorDto {
+  /**
+   * new cursor value
+   * @example 1
+   */
+  cursor: number;
+}
+
 export interface AuthorDto {
   id: string;
   name: string;
@@ -110,6 +118,25 @@ export interface WorkDto {
   deletedAt?: string;
   author: AuthorDto;
   genres: WorkGenreDto[];
+}
+
+export interface FavoriteDto {
+  snippetId: string;
+}
+
+export interface ListSnippetDto {
+  id: string;
+  content: string;
+  analysis?: object;
+  workId: string;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  /** @format date-time */
+  deletedAt?: string;
+  work: WorkDto;
+  favorites: FavoriteDto[];
 }
 
 export interface SnippetDto {
@@ -460,6 +487,25 @@ export class Api<
         method: "GET",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name UsersControllerUpdateCursor
+     * @request PATCH:/users/cursor
+     */
+    usersControllerUpdateCursor: (
+      data: UpdateCursorDto,
+      params: RequestParams = {}
+    ) =>
+      this.request<any, UpdateCursorDto>({
+        path: `/users/cursor`,
+        method: "PATCH",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
   };
   snippets = {
     /**
@@ -486,7 +532,7 @@ export class Api<
       },
       params: RequestParams = {}
     ) =>
-      this.request<any, SnippetDto[]>({
+      this.request<any, ListSnippetDto[]>({
         path: `/snippets`,
         method: "GET",
         query: query,
@@ -513,10 +559,10 @@ export class Api<
      * No description
      *
      * @tags Favorites
-     * @name FavoritesControllerGetFeed
+     * @name FavoritesControllerGetFavoriteSnippets
      * @request GET:/favorites
      */
-    favoritesControllerGetFeed: (params: RequestParams = {}) =>
+    favoritesControllerGetFavoriteSnippets: (params: RequestParams = {}) =>
       this.request<any, FavoriteSnippetDto[]>({
         path: `/favorites`,
         method: "GET",

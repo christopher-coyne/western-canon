@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Role } from "@prisma/client";
+import { UpdateCursorDto } from "./DTO/requests/update-cursor.dto";
 
 @Injectable()
 export class UsersService {
@@ -41,6 +42,18 @@ export class UsersService {
     return {
       ...user,
       favoriteCount: user._count.favorites,
+    };
+  }
+
+  async updateCursor(userId: string, updateCursorDto: UpdateCursorDto) {
+    const user = await this.prismaService.user.update({
+      where: { id: userId },
+      data: { cursor: updateCursorDto.cursor },
+    });
+
+    return {
+      ...user,
+      cursor: updateCursorDto.cursor,
     };
   }
 }

@@ -1,9 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { SnippetDto } from "@/types/api/Api";
+import { ListSnippetDto } from "@/types/api/Api";
+import { Heart } from "lucide-react";
 
 interface ExploreCardProps {
-  snippet: SnippetDto;
+  snippet: ListSnippetDto;
   onClick: () => void;
 }
 
@@ -16,7 +17,10 @@ export const ExploreCard = ({ snippet, onClick }: ExploreCardProps) => {
       <CardContent className="p-4">
         <div className="space-y-2">
           <div>
-            <h3 className="font-semibold text-lg">{snippet.work.title}</h3>
+            <div className="flex flex-row gap-2">
+              {snippet.favorites.length ? <Heart /> : null}
+              <h3 className="font-semibold text-lg">{snippet.work.title}</h3>
+            </div>
             <p className="text-sm text-muted-foreground">
               {snippet.work.author.name},{" "}
               {snippet.work.publishYear?.toString() ?? ""}

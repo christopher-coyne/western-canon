@@ -15,7 +15,22 @@ import { WorkDto } from "src/works/DTO/response/works.dto";
   work      Work       @relation(fields: [workId], references: [id])
   favorites Favorite[]
   */
-export class SnippetDto {
+
+/*
+  favorites: {
+    createdAt: Date;
+    userId: string;
+    snippetId: string;
+}
+    */
+export class FavoriteDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  snippetId: string;
+}
+
+export class ListSnippetDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -53,4 +68,8 @@ export class SnippetDto {
   work: WorkDto;
   /*
   work, favorites */
+
+  @ApiProperty({ type: () => FavoriteDto, isArray: true })
+  @Type(() => FavoriteDto)
+  favorites: FavoriteDto[];
 }

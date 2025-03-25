@@ -16,6 +16,7 @@ import { PaginatedResult } from "src/common/DTO/Pagination.dto";
 import { SnippetDto } from "./DTO/response/snippet.dto";
 import { SnippetsService } from "./snippets.service";
 import { GetSnippetsDto } from "./DTO/request/get-snippets.dto";
+import { ListSnippetDto } from "./DTO/response/list-snippet.dto";
 
 /*
     id        String     @id @default(uuid())
@@ -35,17 +36,19 @@ export class SnippetsController {
   constructor(private readonly snippetsService: SnippetsService) {}
 
   @ApiResponse({
-    type: SnippetDto,
+    type: ListSnippetDto,
     isArray: true,
   })
   @Get("/")
-  async getSnippets(@Query() query: GetSnippetsDto) {
+  async getSnippets(@Query() query: GetSnippetsDto, @Req() request) {
     console.log("total query", query);
+    const userId = request.user?.id;
     const { items, total, page, pageSize } =
       await this.snippetsService.getSnippets(
         query.page,
         query.pageSize,
-        query.query
+        query.query,
+        userId
       );
     return PaginatedResult.ok(items, total, page, pageSize);
   }

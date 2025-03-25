@@ -81,6 +81,8 @@ export const ViewExplore = () => {
     };
   }, [handleObserver]);
 
+  console.log("DATA ", data);
+
   console.log("SELECTED SNIPPET ", selectedSnippet);
   return (
     <div>

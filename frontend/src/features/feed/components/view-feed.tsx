@@ -1,7 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useGetFeed } from "../api/get-feed";
+import { useState } from "react";
 
 export const ViewFeed = () => {
+  const { data, isLoading, isError } = useGetFeed({});
+  const [currentPage, setCurrentPage] = useState(0);
+
+  console.log("data ", data);
+
   return (
     <div className="border-2 border-red-400 flex items-center justify-center">
       <Button
@@ -12,7 +19,7 @@ export const ViewFeed = () => {
       >
         <ChevronLeft className="h-6 w-6" />
       </Button>
-      <div className="w-[50%] h-[50vh] bg-slate-500">TEST</div>
+      <div className="w-[50%] h-[50vh] bg-slate-500"></div>
       <Button
         variant="ghost"
         size="icon"

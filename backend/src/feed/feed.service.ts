@@ -1,15 +1,27 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class FeedService {
   constructor(private prismaService: PrismaService) {}
 
-  async getFeed(page = 1, pageSize = 10) {
+  async getFeed(userId?: string, start?: number) {
+    // add cursor logic later
+    if (userId) {
+      const user = await this.prismaService.user.findUnique({
+        where: { id: userId },
+      });
+      if (!user) {
+        throw new NotFoundException("User not found");
+      }
+    }
+
     const [items, total] = await Promise.all([
       this.prismaService.snippet.findMany({
-        skip: (page - 1) * pageSize,
-        take: pageSize,
+        orderBy: {
+          order: "asc",
+        },
+        take: 10,
       }),
       this.prismaService.snippet.count(),
     ]);
@@ -17,8 +29,8 @@ export class FeedService {
     return {
       items,
       total,
-      page,
-      pageSize,
+      page: Math.floor(start ?? 0 / 10),
+      pageSize: 10,
     };
   }
 }

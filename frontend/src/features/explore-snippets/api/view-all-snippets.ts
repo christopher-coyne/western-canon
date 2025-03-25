@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { SnippetDto } from "@/types/api/Api";
+import { ListSnippetDto, SnippetDto } from "@/types/api/Api";
 
 import { api } from "@/lib/api-client";
 
@@ -18,7 +18,7 @@ export const getSnippets = (
   pageSize = 5,
   tags: string[],
   query?: string
-): Promise<PaginatedResponse<SnippetDto>> => {
+): Promise<PaginatedResponse<ListSnippetDto>> => {
   console.log("sending with query ", query);
   return api
     .get("/snippets", {

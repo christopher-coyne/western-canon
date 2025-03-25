@@ -12,7 +12,10 @@ import {
 import { Result } from "src/common/DTO/result";
 import { AuthenticatedGuard } from "src/auth/authenticated.guard";
 import { ApiResponse } from "@nestjs/swagger";
-import { PaginatedResult } from "src/common/DTO/Pagination.dto";
+import {
+  PaginatedResult,
+  PaginationQueryDto,
+} from "src/common/DTO/Pagination.dto";
 import { SnippetDto } from "src/snippets/DTO/response/snippet.dto";
 import { FeedService } from "./feed.service";
 
@@ -25,10 +28,12 @@ export class FeedController {
     isArray: true,
   })
   @Get("/")
-  async getFeed() {
+  async getFeed(@Query() start: number, @Req() request) {
+    const userId = request.user?.id;
+    console.log("start ", start);
     const { items, total, page, pageSize } = await this.feedService.getFeed(
-      1,
-      10
+      userId,
+      start
     );
     return PaginatedResult.ok(items, total, page, pageSize);
   }

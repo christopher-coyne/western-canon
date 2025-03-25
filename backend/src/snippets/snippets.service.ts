@@ -9,7 +9,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 export class SnippetsService {
   constructor(private prismaService: PrismaService) {}
 
-  async getSnippets(page = 1, pageSize = 10, query?: string) {
+  async getSnippets(page = 1, pageSize = 10, query?: string, userId?: string) {
     console.log("query", query);
     const [items, total] = await Promise.all([
       this.prismaService.snippet.findMany({
@@ -22,6 +22,11 @@ export class SnippetsService {
           },
         },
         include: {
+          favorites: {
+            where: {
+              userId,
+            },
+          },
           work: {
             include: {
               author: true,
