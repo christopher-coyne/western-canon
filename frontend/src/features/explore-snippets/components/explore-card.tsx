@@ -18,7 +18,9 @@ export const ExploreCard = ({ snippet, onClick }: ExploreCardProps) => {
         <div className="space-y-2">
           <div>
             <div className="flex flex-row gap-2">
-              {snippet.favorites.length ? <Heart /> : null}
+              {snippet.favorites.length ? (
+                <Heart className="fill-pink-500 text-pink-500" />
+              ) : null}
               <h3 className="font-semibold text-lg">{snippet.work.title}</h3>
             </div>
             <p className="text-sm text-muted-foreground">

@@ -18,6 +18,7 @@ import {
 } from "src/common/DTO/Pagination.dto";
 import { SnippetDto } from "src/snippets/DTO/response/snippet.dto";
 import { FeedService } from "./feed.service";
+import { GetFeedDto } from "./DTO/request/get-feed-dto";
 
 @Controller("/feed")
 export class FeedController {
@@ -28,13 +29,9 @@ export class FeedController {
     isArray: true,
   })
   @Get("/")
-  async getFeed(@Query() start: number, @Req() request) {
+  async getFeed(@Query() query: GetFeedDto, @Req() request) {
     const userId = request.user?.id;
-    console.log("start ", start);
-    const { items, total, page, pageSize } = await this.feedService.getFeed(
-      userId,
-      start
-    );
-    return PaginatedResult.ok(items, total, page, pageSize);
+    const items = await this.feedService.getFeed(query, userId);
+    return Result.ok(items);
   }
 }

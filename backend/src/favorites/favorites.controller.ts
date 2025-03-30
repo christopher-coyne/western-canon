@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -35,6 +36,17 @@ export class FavoritesController {
     const { items, total, page, pageSize } =
       await this.favoritesService.getFavoriteSnippets(user.id, 1, 10);
     return PaginatedResult.ok(items, total, page, pageSize);
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Put("/snippets/:id")
+  async toggleFavoriteSnippet(@Req() request, @Param("id") snippetId: string) {
+    const userId = request.user.id;
+    const result = await this.favoritesService.toggleFavoriteSnippet(
+      userId,
+      snippetId
+    );
+    return Result.ok(result);
   }
 
   @UseGuards(AuthenticatedGuard)

@@ -1,56 +1,30 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { SnippetDto } from "@/types/api/Api";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/api-client";
+import { QueryConfig } from "@/lib/react-query";
+import { SnippetDto } from "@/types/api/Api";
 
-type PaginatedResponse<T> = {
-  items: T[];
-  isSuccess: boolean;
-  pagination: {
-    total: number;
-    page: number;
-    // ... other pagination fields
-  };
-};
-
-export const getFeed = (
-  page = 1,
-  pageSize = 5
-): Promise<PaginatedResponse<SnippetDto>> => {
+export const getFeed = (cursor: number): Promise<SnippetDto> => {
   return api
-    .get("/feed", {
-      params: {
-        page,
-        pageSize,
-      },
-    })
-    .then((response) => ({
-      items: response.data.data,
-      isSuccess: response.data.isSuccess,
-      pagination: response.data.pagination,
-    }));
+    .get(`/feed?cursor=${cursor}`)
+    .then((response) => response.data.data);
 };
 
-export const getFeedQueryOptions = () => {
-  return {
-    queryKey: ["feed"] as const,
-    queryFn: ({ pageParam = 1 }) => getFeed(pageParam, 5),
-    getNextPageParam: (lastPage: PaginatedResponse<SnippetDto>) => {
-      const hasNextPage =
-        lastPage.pagination.page < Math.ceil(lastPage.pagination.total / 5);
-      return hasNextPage ? lastPage.pagination.page + 1 : undefined;
-    },
-  };
+export const getFeedQueryOptions = (cursor: number) => {
+  return queryOptions({
+    queryKey: ["feed", cursor],
+    queryFn: () => getFeed(cursor),
+  });
 };
 
-type UseSnippetsOptions = {
-  queryConfig?: Partial<ReturnType<typeof getFeedQueryOptions>>;
+type UseFeedOptions = {
+  cursor: number;
+  queryConfig?: QueryConfig<typeof getFeedQueryOptions>;
 };
 
-export const useGetFeed = ({ queryConfig }: UseSnippetsOptions) => {
-  return useInfiniteQuery({
-    ...getFeedQueryOptions(),
+export const useGetProjectById = ({ cursor, queryConfig }: UseFeedOptions) => {
+  return useQuery({
+    ...getFeedQueryOptions(cursor),
     ...queryConfig,
-    initialPageParam: 1,
   });
 };

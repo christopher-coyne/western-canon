@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -6,20 +7,38 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { SnippetDto } from "@/types/api/Api";
+import { ListSnippetDto, SnippetDto } from "@/types/api/Api";
+import { toast } from "sonner";
+import { useToggleFavorite } from "../api/favorite-snippets";
 
 interface SnippetInfoModalProps {
-  snippet: SnippetDto;
+  snippet: ListSnippetDto;
   isOpen: boolean;
   onClose: () => void;
+  hideExcerpt?: boolean;
 }
 
 export default function SnippetInfoModal({
   snippet,
   isOpen,
   onClose,
+  hideExcerpt = false,
 }: SnippetInfoModalProps) {
+  const { mutate: toggleFavorite } = useToggleFavorite({
+    mutationConfig: {
+      onSuccess: () => {
+        toast("Snippet added to favorites");
+      },
+      onError: () => {
+        toast("Error adding to favorites");
+      },
+    },
+  });
   console.log("SNIPPET OPEN... ");
+  const handleFavorite = async () => {
+    const res = await toggleFavorite({ id: snippet.id });
+    console.log("RES: ", res);
+  };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
@@ -47,16 +66,24 @@ export default function SnippetInfoModal({
           </div>
         </div>
 
-        <div className="mt-4">
-          <h3 className="font-semibold mb-2">Excerpt</h3>
-          <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
-            {snippet.content}
-          </blockquote>
-        </div>
+        {!hideExcerpt && (
+          <div className="mt-4">
+            <h3 className="font-semibold mb-2">Excerpt</h3>
+            <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
+              {snippet.content}
+            </blockquote>
+          </div>
+        )}
 
         <div className="mt-4">
           <h3 className="font-semibold mb-2">Analysis</h3>
           <p className="text-sm">analysis...</p>
+        </div>
+
+        <div className="mt-4">
+          <Button onClick={() => handleFavorite()}>
+            {snippet.favorites.length ? "Unfavorite" : "Favorite"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

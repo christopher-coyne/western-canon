@@ -34,6 +34,29 @@ export class FavoritesService {
     };
   }
 
+  async toggleFavoriteSnippet(userId: string, snippetId: string) {
+    // First check if snippet exists
+    const favoriteSnippet = await this.prismaService.favorite.findFirst({
+      where: { snippetId, userId },
+    });
+
+    if (!favoriteSnippet) {
+      await this.prismaService.favorite.create({
+        data: { snippetId, userId },
+      });
+    } else {
+      // Create favorite
+      return await this.prismaService.favorite.delete({
+        where: {
+          userId_snippetId: {
+            userId,
+            snippetId,
+          },
+        },
+      });
+    }
+  }
+
   async favoriteSnippet(userId: string, snippetId: string) {
     // First check if snippet exists
     const snippet = await this.prismaService.snippet.findUnique({
