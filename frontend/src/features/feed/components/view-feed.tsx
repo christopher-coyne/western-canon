@@ -1,58 +1,80 @@
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Heart, Info } from "lucide-react";
-import { useGetFeed } from "../api/get-feed";
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import { Separator } from "@/components/ui/separator";
-import { useToggleFavorite } from "@/features/explore-snippets/api/favorite-snippets";
 import { toast } from "sonner";
-import SnippetInfoModal from "@/features/explore-snippets/components/snippet-info-modal";
+import { Badge } from "@/components/ui/badge";
+import { ListSnippetDto } from "@/types/api/Api";
 
 export const ViewFeed = () => {
-  const [cursor, setCursor] = useState(1);
-  const [shouldFetch, setShouldFetch] = useState(true);
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [seenQueries, setSeenQueries] = useState<number[]>([]);
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["user"],
+  });
 
-  const { mutate: toggleFavorite } = useToggleFavorite({
-    mutationConfig: {
-      onSuccess: () => {
-        toast("Snippet added to favorites");
-      },
+  console.log("user ", user, " , isLoading ", isLoading);
+
+  if (isLoading) {
+    return null;
+  }
+  console.log("returning feed... ", user);
+  const cursor = user?.cursor ?? 1;
+
+  return <Feed cursor={cursor} />;
+};
+
+export const Feed = ({ cursor }: { cursor: number }) => {
+  console.log("cursor ", cursor);
+  const [mode, setMode] = useState<"analysis" | "content">("analysis");
+  const queryClient = useQueryClient();
+
+  const [localCursor, setLocalCursor] = useState<number>(cursor);
+
+  const handleCursorChange = (newCursor: number) => {
+    updateCursor(newCursor);
+  };
+
+  const { mutate: updateCursor } = useMutation({
+    mutationFn: (newCursor: number) => {
+      console.log("newCursor ", newCursor);
+      return api.patch(`/users/cursor`, { cursor: newCursor });
+    },
+    onSuccess: (data, newCursor) => {
+      console.log("data ", data, newCursor);
+      setLocalCursor(newCursor);
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
+    },
+  });
+  const { mutate: toggleFavorite } = useMutation({
+    onSuccess: (data, itemId) => {
+      console.log("successful...", data, itemId);
+      toast("Snippet added to favorites");
+      queryClient.invalidateQueries({ queryKey: ["feed", localCursor] });
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+      queryClient.invalidateQueries({ queryKey: ["snippets"] });
+    },
+    mutationFn: ({ id }: { id: string }) => {
+      return api.put(`/favorites/snippets/${id}`);
     },
   });
 
-  const { isPending, error, data } = useQuery({
-    queryKey: ["feed", cursor],
-    queryFn: () => {
+  const { data } = useQuery({
+    queryKey: ["feed", localCursor],
+    queryFn: (): Promise<ListSnippetDto[]> => {
       return api
-        .get(`/feed?cursor=${cursor}`)
+        .get(`/feed?cursor=${localCursor}`)
         .then((response) => response.data.data);
     },
     staleTime: 0,
     gcTime: 0,
-    enabled: shouldFetch,
   });
 
-  useEffect(() => {
-    if (!data) {
-      // Always enable fetching if no data is available yet
-      setShouldFetch(true);
-      return;
-    }
-
-    // Check if we're at the edge of our data
-    const isAtEnd = cursor >= data[data.length - 1].order;
-    const isAtStart = cursor <= data[0].order;
-
-    // Only fetch if we're at the boundaries
-    setShouldFetch(isAtEnd || isAtStart);
-  }, [cursor, data]);
+  console.log("data ", data);
 
   const snippetToShow = data
-    ? data.find((item) => item.order === cursor)
-    : null;
+    ? data.find((item) => item.order === localCursor)
+    : undefined;
 
   console.log("data ", data);
 
@@ -61,8 +83,8 @@ export const ViewFeed = () => {
       <Button
         variant="ghost"
         size="icon"
-        className="ml-2 rounded-full bg-primary/10 hover:bg-primary/20 z-10 h-12 w-12"
-        onClick={() => setCursor(cursor - 1)}
+        className="mr-2 rounded-full bg-primary/10 hover:bg-primary/20 z-10 h-12 w-12"
+        onClick={() => handleCursorChange(localCursor - 1)}
       >
         <ChevronLeft className="h-6 w-6" />
       </Button>
@@ -74,18 +96,44 @@ export const ViewFeed = () => {
               <div className="text-2xl font-bold">
                 {snippetToShow.work.title}
               </div>
-              <div className="text-xl">{snippetToShow.work.author.name}</div>
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between w-full">
+                  <div className="flex gap-2">
+                    <div>{snippetToShow.work.author.name}</div>
+                    <div>
+                      Published {String(snippetToShow.work.publishYear)}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    {snippetToShow.work.genres.map((genre) => (
+                      <Badge variant="outline">{genre.genre.name}</Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
               <Separator />
             </div>
-            {snippetToShow.content}
+            {mode === "content" ? (
+              snippetToShow.content
+            ) : (
+              <div className="flex flex-col gap-2">
+                <h2>Analysis</h2>
+                {snippetToShow.analysis}
+              </div>
+            )}
           </div>
         ) : (
           "loading..."
         )}
         <div className="absolute bottom-4 right-4 flex gap-2">
           <Button
-            onClick={() => toggleFavorite({ id: snippetToShow?.id })}
+            onClick={() => {
+              if (snippetToShow) {
+                toggleFavorite({ id: snippetToShow?.id });
+              }
+            }}
             variant="ghost"
+            disabled={!snippetToShow}
             className="rounded-full  h-10 w-10"
           >
             {snippetToShow?.favorites.length ? (
@@ -95,11 +143,13 @@ export const ViewFeed = () => {
             )}
           </Button>
           <Button
-            onClick={() => setOpenModal(true)}
+            onClick={() =>
+              setMode(mode === "analysis" ? "content" : "analysis")
+            }
             variant="ghost"
-            className="rounded-full  h-10 w-10"
           >
             <Info />
+            {mode === "analysis" ? "Content" : "Analysis"}
           </Button>
         </div>
       </div>
@@ -107,19 +157,10 @@ export const ViewFeed = () => {
         variant="ghost"
         size="icon"
         className="ml-2 rounded-full bg-primary/10 hover:bg-primary/20 z-10 h-12 w-12"
-        onClick={() => setCursor(cursor + 1)}
+        onClick={() => handleCursorChange(localCursor + 1)}
       >
         <ChevronRight className="h-6 w-6" />
       </Button>
-
-      {openModal && snippetToShow && (
-        <SnippetInfoModal
-          snippet={snippetToShow}
-          isOpen={!!snippetToShow}
-          onClose={() => setOpenModal(false)}
-          hideExcerpt={true}
-        />
-      )}
     </div>
   );
 };

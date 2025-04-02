@@ -127,8 +127,9 @@ export interface FavoriteDto {
 export interface ListSnippetDto {
   id: string;
   content: string;
-  analysis?: object;
+  analysis?: string;
   workId: string;
+  order: number;
   /** @format date-time */
   createdAt: string;
   /** @format date-time */
@@ -142,7 +143,7 @@ export interface ListSnippetDto {
 export interface SnippetDto {
   id: string;
   content: string;
-  analysis?: object;
+  analysis?: string;
   workId: string;
   /** @format date-time */
   createdAt: string;
@@ -150,13 +151,22 @@ export interface SnippetDto {
   updatedAt: string;
   /** @format date-time */
   deletedAt?: string;
+  order: number;
   work: WorkDto;
+  favorites: FavoriteDto[];
 }
 
 export interface FavoriteSnippetDto {
   /** @format date-time */
   createdAt: string;
   snippet: SnippetDto;
+}
+
+export interface ToggleFavoriteSnippetResponseDto {
+  /** The action that was performed on the snippet */
+  action: "FAVORITE" | "UNFAVORITE";
+  /** The ID of the snippet that was toggled */
+  snippetId: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -547,10 +557,19 @@ export class Api<
      * @name FeedControllerGetFeed
      * @request GET:/feed
      */
-    feedControllerGetFeed: (params: RequestParams = {}) =>
+    feedControllerGetFeed: (
+      query?: {
+        /** Get snippets starting from this snippet id */
+        cursor?: number;
+        /** Direction of the feed */
+        direction?: string;
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<any, SnippetDto[]>({
         path: `/feed`,
         method: "GET",
+        query: query,
         ...params,
       }),
   };
@@ -566,6 +585,23 @@ export class Api<
       this.request<any, FavoriteSnippetDto[]>({
         path: `/favorites`,
         method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Favorites
+     * @name FavoritesControllerToggleFavoriteSnippet
+     * @request PUT:/favorites/snippets/{id}
+     */
+    favoritesControllerToggleFavoriteSnippet: (
+      id: string,
+      params: RequestParams = {}
+    ) =>
+      this.request<any, ToggleFavoriteSnippetResponseDto[]>({
+        path: `/favorites/snippets/${id}`,
+        method: "PUT",
         ...params,
       }),
 

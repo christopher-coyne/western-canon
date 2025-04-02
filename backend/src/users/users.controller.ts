@@ -29,6 +29,7 @@ export class UsersController {
   @UseGuards(AuthenticatedGuard)
   @Patch("/cursor")
   async updateCursor(@Req() request, @Body() updateCursorDto: UpdateCursorDto) {
+    console.log("updateCursorDto controller ", updateCursorDto);
     const userId = request.user.id;
     const updatedCursor = await this.usersService.updateCursor(
       userId,

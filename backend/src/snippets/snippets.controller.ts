@@ -41,7 +41,6 @@ export class SnippetsController {
   })
   @Get("/")
   async getSnippets(@Query() query: GetSnippetsDto, @Req() request) {
-    console.log("total query", query);
     const userId = request.user?.id;
     const { items, total, page, pageSize } =
       await this.snippetsService.getSnippets(

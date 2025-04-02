@@ -6,6 +6,7 @@ import { FeedModule } from "./feed/feed.module";
 import { FavoritesModule } from "./favorites/favorites.module";
 import { WorksModule } from "./works/works.module";
 import { AuthModule } from "./auth/auth.module";
+import { GenreModule } from "./genre/genre.module";
 @Module({
   imports: [
     PassportModule,
@@ -14,6 +15,7 @@ import { AuthModule } from "./auth/auth.module";
     FeedModule,
     FavoritesModule,
     WorksModule,
+    GenreModule,
     ConfigModule.forRoot({ isGlobal: true }),
   ], // providers or imports?
 })

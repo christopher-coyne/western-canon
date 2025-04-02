@@ -2,6 +2,8 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsDate, IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { WorkDto } from "src/works/DTO/response/works.dto";
+import { FavoriteDto } from "./list-snippet.dto";
+import { Snippet } from "@prisma/client";
 /*
   id        String     @id @default(uuid())
   content   String     @db.Text
@@ -17,40 +19,36 @@ import { WorkDto } from "src/works/DTO/response/works.dto";
   */
 export class SnippetDto {
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   id: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   content: string;
 
   @ApiPropertyOptional()
-  @IsString()
-  @IsNotEmpty()
-  analysis: string | null;
+  analysis: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   workId: string;
 
   @ApiProperty()
-  @IsDate()
   createdAt: Date;
 
   @ApiProperty()
-  @IsDate()
   updatedAt: Date;
 
   @ApiPropertyOptional()
-  @IsDate()
   deletedAt: Date;
+
+  @ApiProperty()
+  order: number;
 
   /*
   work, favorites */
   @ApiProperty({ type: () => WorkDto })
   @Type(() => WorkDto)
   work: WorkDto;
+
+  @ApiProperty({ type: () => FavoriteDto, isArray: true })
+  @Type(() => FavoriteDto)
+  favorites: FavoriteDto[];
 }

@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { login } from "@/lib/auth";
+import { useQueryClient } from "@tanstack/react-query";
 
 const signInSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -28,6 +29,7 @@ interface SignInFormProps {
 
 export const SignInForm = ({ onSuccess }: SignInFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -41,6 +43,8 @@ export const SignInForm = ({ onSuccess }: SignInFormProps) => {
     try {
       setIsLoading(true);
       await login(data.email, data.password);
+
+      queryClient.invalidateQueries({ queryKey: ["user"] });
 
       toast("You have successfully signed in");
       onSuccess();

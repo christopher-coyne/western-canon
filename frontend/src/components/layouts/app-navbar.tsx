@@ -1,17 +1,28 @@
 "use client";
 
-import { Home, Search, User, Heart, Menu } from "lucide-react";
+import { Home, Search, Heart, Menu, User2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/app/auth-provider";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api-client";
 
 export function AppNavbar() {
   const location = useLocation();
   const [sheetOpen, setSheetOpen] = useState(false);
   const { openSignUp, openSignIn } = useAuth();
+
+  const { data: user } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => {
+      return api.get(`/users/profile`).then((response) => response.data.data);
+    },
+  });
+
+  console.log("USER ", user);
 
   const navItems = [
     {
@@ -19,24 +30,21 @@ export function AppNavbar() {
       href: "/",
       icon: Home,
       active: location.pathname === "/",
+      protected: false,
     },
     {
       label: "Explore",
       href: "/explore",
       icon: Search,
       active: location.pathname === "/explore",
+      protected: false,
     },
     {
       label: "Favorites",
       href: "/favorites",
       icon: Heart,
       active: location.pathname === "/favorites",
-    },
-    {
-      label: "Profile",
-      href: "/profile",
-      icon: User,
-      active: location.pathname === "/profile",
+      protected: true,
     },
   ];
 
@@ -49,18 +57,20 @@ export function AppNavbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 mx-6">
-          {navItems.map((item) => (
-            <Button
-              key={item.href}
-              variant={item.active ? "default" : "ghost"}
-              asChild
-            >
-              <Link to={item.href} className="flex items-center">
-                <item.icon className="h-4 w-4 mr-2" />
-                {item.label}
-              </Link>
-            </Button>
-          ))}
+          {navItems
+            .filter((item) => !item.protected || user)
+            .map((item) => (
+              <Button
+                key={item.href}
+                variant={item.active ? "default" : "ghost"}
+                asChild
+              >
+                <Link to={item.href} className="flex items-center">
+                  <item.icon className="h-4 w-4 mr-2" />
+                  {item.label}
+                </Link>
+              </Button>
+            ))}
         </nav>
 
         {/* Mobile Navigation */}
@@ -103,10 +113,21 @@ export function AppNavbar() {
         </Sheet>
 
         <div className="ml-auto flex items-center space-x-4">
-          <Button onClick={openSignIn}>Sign In</Button>
-          <Button onClick={openSignUp} variant="default">
-            Sign Up
-          </Button>
+          {user ? (
+            <Link to={"/profile"}>
+              <Button>
+                <User2 />
+                My Profile
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Button onClick={openSignIn}>Sign In</Button>
+              <Button onClick={openSignUp} variant="default">
+                Sign Up
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>

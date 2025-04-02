@@ -19,14 +19,7 @@ export class UsersService {
   async getProfile(userId: string) {
     const user = await this.prismaService.user.findUnique({
       where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        dayStreak: true,
-        lastActive: true,
-        createdAt: true,
+      include: {
         _count: {
           select: {
             favorites: true,
@@ -46,14 +39,13 @@ export class UsersService {
   }
 
   async updateCursor(userId: string, updateCursorDto: UpdateCursorDto) {
+    console.log("updateCursorDto ", updateCursorDto);
     const user = await this.prismaService.user.update({
       where: { id: userId },
       data: { cursor: updateCursorDto.cursor },
     });
 
-    return {
-      ...user,
-      cursor: updateCursorDto.cursor,
-    };
+    console.log("UPDATED user ", user);
+    return user;
   }
 }

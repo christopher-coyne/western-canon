@@ -7,9 +7,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ListSnippetDto, SnippetDto } from "@/types/api/Api";
+import { ListSnippetDto } from "@/types/api/Api";
 import { toast } from "sonner";
 import { useToggleFavorite } from "../api/favorite-snippets";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 interface SnippetInfoModalProps {
   snippet: ListSnippetDto;
@@ -24,10 +27,15 @@ export default function SnippetInfoModal({
   onClose,
   hideExcerpt = false,
 }: SnippetInfoModalProps) {
-  const { mutate: toggleFavorite } = useToggleFavorite({
+  const queryClient = useQueryClient();
+  const [favorite, setFavorite] = useState(snippet.favorites.length > 0);
+  const { mutate: toggleFavorite, isPending } = useToggleFavorite({
     mutationConfig: {
       onSuccess: () => {
         toast("Snippet added to favorites");
+        queryClient.invalidateQueries({ queryKey: ["favorites"] });
+        queryClient.invalidateQueries({ queryKey: ["snippets"] });
+        setFavorite(!favorite);
       },
       onError: () => {
         toast("Error adding to favorites");
@@ -36,8 +44,7 @@ export default function SnippetInfoModal({
   });
   console.log("SNIPPET OPEN... ");
   const handleFavorite = async () => {
-    const res = await toggleFavorite({ id: snippet.id });
-    console.log("RES: ", res);
+    toggleFavorite({ id: snippet.id });
   };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -80,9 +87,10 @@ export default function SnippetInfoModal({
           <p className="text-sm">analysis...</p>
         </div>
 
-        <div className="mt-4">
-          <Button onClick={() => handleFavorite()}>
-            {snippet.favorites.length ? "Unfavorite" : "Favorite"}
+        <div>
+          <Button onClick={() => handleFavorite()} className="mt-4">
+            {isPending ? <Loader2 className="animate-spin" /> : null}
+            {favorite ? "Unfavorite" : "Favorite"}
           </Button>
         </div>
       </DialogContent>

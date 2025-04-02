@@ -13,7 +13,7 @@ export const createDiscussionInputSchema = z.object({
 export type CreateDiscussionInput = z.infer<typeof createDiscussionInputSchema>;
 */
 
-export const toggleFavorite = ({
+export const toggleFavoriteFeed = ({
   id,
 }: {
   id: string;
@@ -21,20 +21,20 @@ export const toggleFavorite = ({
   return api.put(`/favorites/snippets/${id}`);
 };
 
-type UseToggleFavoriteOptions = {
-  mutationConfig?: MutationConfig<typeof toggleFavorite>;
+type UseToggleFavoriteFeedOptions = {
+  mutationConfig?: MutationConfig<typeof toggleFavoriteFeed>;
 };
 
-export const useToggleFavorite = ({
+export const useToggleFavoriteFeed = ({
   mutationConfig,
-}: UseToggleFavoriteOptions = {}) => {
+}: UseToggleFavoriteFeedOptions = {}) => {
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
     onSuccess: (...args) => {
       onSuccess?.(...args);
     },
-    mutationFn: toggleFavorite,
+    mutationFn: toggleFavoriteFeed,
     ...restConfig,
   });
 };

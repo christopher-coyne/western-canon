@@ -17,8 +17,12 @@ export class FavoritesService {
               work: {
                 include: {
                   author: true,
+                  genres: {
+                    include: { genre: true },
+                  },
                 },
               },
+              favorites: true,
             },
           },
         },

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Role, User } from "@prisma/client";
 
-export class UserDto implements User {
+export class UserDto {
   @ApiProperty({ description: "Unique user identifier" })
   id: string;
 
@@ -9,7 +9,10 @@ export class UserDto implements User {
   email: string;
 
   @ApiPropertyOptional({ description: "User display name" })
-  name: string | null;
+  name: string;
+
+  @ApiPropertyOptional({ description: "User cursor" })
+  cursor: number;
 
   @ApiProperty({ description: "User role", enum: Role, default: Role.USER })
   role: Role;

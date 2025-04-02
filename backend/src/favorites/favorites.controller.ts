@@ -18,6 +18,7 @@ import { SnippetDto } from "src/snippets/DTO/response/snippet.dto";
 import { FavoritesService } from "./favorites.service";
 import { LocalAuthGuard } from "src/auth/localAuthenticated.guard";
 import { FavoriteSnippetDto } from "./DTO/response/favorite-snippet";
+import { ToggleFavoriteSnippetResponseDto } from "./DTO/response/toggle-favorite-snippet";
 
 @Controller("/favorites")
 export class FavoritesController {
@@ -31,13 +32,16 @@ export class FavoritesController {
   @Get("/")
   async getFavoriteSnippets(@Req() request) {
     const user = request.user;
-    console.log("user ", user);
 
     const { items, total, page, pageSize } =
       await this.favoritesService.getFavoriteSnippets(user.id, 1, 10);
     return PaginatedResult.ok(items, total, page, pageSize);
   }
 
+  @ApiResponse({
+    type: ToggleFavoriteSnippetResponseDto,
+    isArray: true,
+  })
   @UseGuards(AuthenticatedGuard)
   @Put("/snippets/:id")
   async toggleFavoriteSnippet(@Req() request, @Param("id") snippetId: string) {

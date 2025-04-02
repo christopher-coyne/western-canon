@@ -3,7 +3,7 @@ import { ListSnippetDto, SnippetDto } from "@/types/api/Api";
 
 import { api } from "@/lib/api-client";
 
-type PaginatedResponse<T> = {
+export type PaginatedResponse<T> = {
   items: T[];
   isSuccess: boolean;
   pagination: {

@@ -8,13 +8,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Filter, Search } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ExploreCard } from "./explore-card";
-import { useGetSnippets } from "../api/view-all-snippets";
-import { SnippetDto } from "@/types/api/Api";
+import { GenreDto, ListSnippetDto, SnippetDto } from "@/types/api/Api";
 import SnippetInfoModal from "./snippet-info-modal";
-import { useInView } from "react-intersection-observer";
-import { useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api-client";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationLink,
+  PaginationEllipsis,
+  PaginationNext,
+} from "@/components/ui/pagination";
+
+type PaginatedResponse<T> = {
+  data: T[];
+  isSuccess: boolean;
+  pagination: {
+    total: number;
+    page: number;
+    // ... other pagination fields
+  };
+};
 
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -35,6 +53,7 @@ const useDebounce = (value: string, delay: number) => {
 export const ViewExplore = () => {
   // Extract unique genres for filter
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
   const debouncedQuery = useDebounce(searchQuery, 500);
   const [genreFilter, setGenreFilter] = useState<string | null>(null);
   const [selectedSnippet, setSelectedSnippet] = useState<SnippetDto | null>(
@@ -42,46 +61,20 @@ export const ViewExplore = () => {
   );
   const [showFilters, setShowFilters] = useState(false);
 
-  const observerRef = useRef(null);
-
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    status,
-  } = useGetSnippets({ query: debouncedQuery, tags: [] });
-  console.log("GET SNIPPETS DATA ", data);
-
-  const handleObserver = useCallback(
-    (entries: any) => {
-      const [entry] = entries;
-      console.log("ENTRY ", entry);
-      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
+  const { data: genres } = useQuery({
+    queryKey: ["genres"],
+    queryFn: (): Promise<GenreDto[]> => {
+      return api.get(`/genres`).then((response) => response.data);
     },
-    [fetchNextPage, hasNextPage, isFetchingNextPage]
-  );
+  });
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(handleObserver, {
-      rootMargin: "0px 0px 200px 0px", // Load more when within 200px of the bottom
-    });
-
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observer.unobserve(observerRef.current);
-      }
-    };
-  }, [handleObserver]);
-
-  console.log("DATA ", data);
+  const { data: snippets } = useQuery({
+    queryKey: ["snippets", debouncedQuery, page, genreFilter],
+    queryFn: (): Promise<{ data: PaginatedResponse<ListSnippetDto> }> =>
+      api.get(`/snippets`, {
+        params: { page, pageSize: 12, query: debouncedQuery, tags: [] },
+      }),
+  });
 
   console.log("SELECTED SNIPPET ", selectedSnippet);
   return (
@@ -110,7 +103,7 @@ export const ViewExplore = () => {
           </Button>
 
           <span className="text-sm text-muted-foreground">
-            {data?.pages[0].pagination.total} results
+            {snippets?.data.pagination.total} results
           </span>
         </div>
 
@@ -127,6 +120,11 @@ export const ViewExplore = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Genres</SelectItem>
+                  {genres?.map((genre) => (
+                    <SelectItem key={genre.name} value={genre.name}>
+                      {genre.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -135,25 +133,97 @@ export const ViewExplore = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {data?.pages
-          .flatMap((page) => page.items)
-          .map((snippet) => (
-            <ExploreCard
-              key={snippet.id}
-              snippet={snippet}
-              onClick={() => setSelectedSnippet(snippet)}
-            />
-          ))}
+        {snippets?.data.data.map((snippet) => (
+          <ExploreCard
+            key={snippet.id}
+            snippet={snippet}
+            onClick={() => setSelectedSnippet(snippet)}
+          />
+        ))}
 
-        {data?.pages.flatMap((page) => page.items).length === 0 && (
+        {snippets?.data.data.length === 0 && (
           <div className="col-span-full text-center py-12 text-muted-foreground">
             No results found. Try adjusting your search or filters.
           </div>
         )}
       </div>
+      <Pagination className="mt-4">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (page > 1) setPage(page - 1);
+              }}
+              className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
 
-      {/* <button onClick={() => fetchNextPage()}>infinite scroll...</button> */}
-      <div ref={observerRef} className="h-10 border-2 border-red-500"></div>
+          {page > 1 && (
+            <PaginationItem>
+              <PaginationLink
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage(page - 1);
+                }}
+              >
+                {page - 1}
+              </PaginationLink>
+            </PaginationItem>
+          )}
+
+          <PaginationItem>
+            <PaginationLink href="#" isActive>
+              {page}
+            </PaginationLink>
+          </PaginationItem>
+
+          {snippets?.data.pagination &&
+            page < Math.ceil(snippets.data.pagination.total / 12) && (
+              <PaginationItem>
+                <PaginationLink
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage(page + 1);
+                  }}
+                >
+                  {page + 1}
+                </PaginationLink>
+              </PaginationItem>
+            )}
+
+          {snippets?.data.pagination &&
+            page + 1 < Math.ceil(snippets.data.pagination.total / 12) && (
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+            )}
+
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (
+                  snippets?.data.pagination &&
+                  page < Math.ceil(snippets.data.pagination.total / 12)
+                ) {
+                  setPage(page + 1);
+                }
+              }}
+              className={
+                snippets?.data.pagination &&
+                page >= Math.ceil(snippets.data.pagination.total / 12)
+                  ? "pointer-events-none opacity-50"
+                  : ""
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
 
       {selectedSnippet && (
         <SnippetInfoModal
