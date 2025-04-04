@@ -3,6 +3,27 @@ import { seedAuthors } from "./seeds/authors";
 import { seedWorks } from "./seeds/works";
 import { seedSnippets } from "./seeds/snippets";
 import { seedGenres } from "./seeds/genres";
+import * as fs from "fs";
+import * as path from "path";
+import { processedAuthors } from "./texts/processed-authors";
+
+import { work as aristophanesWork } from "./texts/aristophanes/work";
+import { work as homerWork } from "./texts/homer/work";
+import { work as sophoclesWork } from "./texts/sophocles/work";
+import { work as thucydidesWork } from "./texts/thucydides/work";
+import { work as platoWork } from "./texts/plato/work";
+import { work as aristotleWork } from "./texts/aristotle/work";
+import { work as herodotusWork } from "./texts/herodotus/work";
+import { work as euripidesWork } from "./texts/euripides/work";
+
+import { snippets as aristophanesSnippets } from "./texts/aristophanes/snippets";
+import { snippets as homerSnippets } from "./texts/homer/snippets";
+import { snippets as sophoclesSnippets } from "./texts/sophocles/snippets";
+import { snippets as thucydidesSnippets } from "./texts/thucydides/snippets";
+import { snippets as platoSnippets } from "./texts/plato/snippets";
+import { snippets as aristotleSnippets } from "./texts/aristotle/snippets";
+import { snippets as herodotusSnippets } from "./texts/herodotus/snippets";
+import { snippets as euripidesSnippets } from "./texts/euripides/snippets";
 
 const prisma = new PrismaClient();
 
@@ -21,6 +42,7 @@ model User {
   */
 async function main() {
   // Create test user
+  /*
   const user1 = await prisma.user.create({
     data: {
       email: "james@gmail.com",
@@ -167,6 +189,159 @@ async function main() {
       });
     }
   }
+    */
+
+  console.log("thucidydes work ", thucydidesWork);
+  console.log("Processed authors: ", processedAuthors);
+  // seed genres
+  const genres = ["Greek Comedy", "Greek Tragedy", "Philosophy", "History"];
+
+  for (const genre of genres) {
+    await prisma.genre.create({ data: { name: genre } });
+  }
+
+  // seed authors
+
+  for (const author of processedAuthors) {
+    await prisma.author.create({
+      data: author,
+    });
+  }
+
+  // seed works
+  const frogs = await prisma.work.create({
+    data: {
+      ...aristophanesWork,
+      authorId: "81495f0d-d487-4a78-88b4-910c14192f85",
+    },
+  });
+
+  const iliad = await prisma.work.create({
+    data: { ...homerWork, authorId: "6d5030f3-2552-4854-95ab-943347405adb" },
+  });
+
+  const oedipus = await prisma.work.create({
+    data: {
+      ...sophoclesWork,
+      authorId: "64866369-caf8-44bf-863c-07bd8dd48b6d",
+    },
+  });
+
+  const peloponnesianWar = await prisma.work.create({
+    data: {
+      ...thucydidesWork,
+      authorId: "d3524ab8-9281-4dd2-8df1-becd6db44e30",
+    },
+  });
+
+  const symposium = await prisma.work.create({
+    data: {
+      ...platoWork,
+      authorId: "544d0a50-5268-435d-90d7-21011cd56c0e",
+    },
+  });
+
+  const bacchae = await prisma.work.create({
+    data: {
+      ...euripidesWork,
+      authorId: "7b41c3ea-e45f-471e-a472-900b1e0ffb63",
+    },
+  });
+
+  const histories = await prisma.work.create({
+    data: {
+      ...herodotusWork,
+      authorId: "5fee5ee2-bfd8-471a-a133-83f43fc10d7a",
+    },
+  });
+
+  const poetics = await prisma.work.create({
+    data: {
+      ...aristotleWork,
+      authorId: "08c5a243-55ea-43a2-8d45-9407970d5200",
+    },
+  });
+
+  // seed snippets
+  for (const snippet of aristophanesSnippets) {
+    await prisma.snippet.create({
+      data: {
+        content: snippet.content,
+        workId: frogs.id,
+        analysis: snippet.analysis,
+      },
+    });
+  }
+
+  for (const snippet of homerSnippets) {
+    await prisma.snippet.create({
+      data: {
+        content: snippet.content,
+        workId: iliad.id,
+        analysis: snippet.analysis,
+      },
+    });
+  }
+
+  for (const snippet of sophoclesSnippets) {
+    await prisma.snippet.create({
+      data: {
+        content: snippet.content,
+        workId: oedipus.id,
+        analysis: snippet.analysis,
+      },
+    });
+  }
+
+  for (const snippet of thucydidesSnippets) {
+    await prisma.snippet.create({
+      data: {
+        content: snippet.content,
+        workId: peloponnesianWar.id,
+        analysis: snippet.analysis,
+      },
+    });
+  }
+
+  for (const snippet of platoSnippets) {
+    await prisma.snippet.create({
+      data: {
+        content: snippet.content,
+        workId: symposium.id,
+        analysis: snippet.analysis,
+      },
+    });
+  }
+
+  for (const snippet of aristotleSnippets) {
+    await prisma.snippet.create({
+      data: {
+        content: snippet.content,
+        workId: poetics.id,
+        analysis: snippet.analysis,
+      },
+    });
+  }
+
+  for (const snippet of herodotusSnippets) {
+    await prisma.snippet.create({
+      data: {
+        content: snippet.content,
+        workId: histories.id,
+        analysis: snippet.analysis,
+      },
+    });
+  }
+
+  for (const snippet of euripidesSnippets) {
+    await prisma.snippet.create({
+      data: {
+        content: snippet.content,
+        workId: bacchae.id,
+        analysis: snippet.analysis,
+      },
+    });
+  }
 
   await prisma.user.create({
     data: {
@@ -177,10 +352,12 @@ async function main() {
     },
   });
 
-  // Seed snippets
+  // Seed works
+  /*
   console.log("Seeding snippets...");
   const snippets = await seedSnippets(works);
   console.log(`Created ${snippets.length} snippets`);
+  */
 }
 
 main()

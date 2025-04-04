@@ -7,8 +7,157 @@ export async function seedSnippets(works: any[]) {
   const snippets = [
     // Pride and Prejudice snippets
     {
-      content:
-        "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.",
+      content: `[Enter suddenly and in haste a Messenger from the Mountain.]
+
+MESSENGER:
+Great Pentheus, Lord of all this Theban land,
+I come from high Kithaeron, where the frore
+Snow spangles gleam and cease not evermore...
+
+PENTHEUS:
+And what of import may thy coming bring?
+
+MESSENGER:
+I have seen the Wild White Women there, O King,
+Whose fleet limbs darted arrow-like but now
+From Thebes away, and come to tell thee how
+They work strange deeds and passing marvel. Yet
+I first would learn thy pleasure. Shall I set
+My whole tale forth, or veil the stranger part?
+Yea, Lord, I fear the swiftness of thy heart,
+Thine edged wrath and more than royal soul.
+
+PENTHEUS:
+Thy tale shall nothing scathe thee. Tell the whole.
+It skills not to be wroth with honesty.
+Nay, if thy news of them be dark, 'tis he
+Shall pay it, who bewitched and led them on.
+
+MESSENGER:
+Our herded kine were moving in the dawn
+Up to the peaks, the greyest, coldest time,
+When the first rays steal earthward, and the rime
+Yields, when I saw three bands of them. The one
+Autonoë led, one Ino, one thine own
+Mother, Agâvê. There beneath the trees
+Sleeping they lay, like wild things flung at ease
+In the forest; one half sinking on a bed
+Of deep pine greenery; one with careless head
+Amid the fallen oak leaves; all most cold
+In purity--not as thy tale was told
+Of wine-cups and wild music and the chase
+For love amid the forest's loneliness.
+
+Then rose the Queen Agâvê suddenly
+Amid her band, and gave the God's wild cry,
+"Awake, ye Bacchanals! I hear the sound
+Of hornèd kine. Awake ye!" Then, all round,
+Alert, the warm sleep fallen from their eyes,
+A marvel of swift ranks I saw them rise,
+Dames young and old, and gentle maids unwed
+Among them. O'er their shoulders first they shed
+Their tresses, and caught up the fallen fold
+Of mantles where some clasp had loosened hold,
+And girt the dappled fawn-skins in with long
+Quick snakes that hissed and writhed with quivering tongue.
+
+And one a young fawn held, and one a wild
+Wolf cub, and fed them with white milk, and smiled
+In love, young mothers with a mother's breast
+And babes at home forgotten! Then they pressed
+Wreathed ivy round their brows, and oaken sprays
+And flowering bryony. And one would raise
+Her wand and smite the rock, and straight a jet
+Of quick bright water came. Another set
+Her thyrsus in the bosomed earth, and there
+Was red wine that the God sent up to her,
+A darkling fountain. And if any lips
+Sought whiter draughts, with dipping finger-tips
+They pressed the sod, and gushing from the ground
+Came springs of milk. And reed-wands ivy-crowned
+Ran with sweet honey, drop by drop. O King,
+Hadst thou been there, as I, and seen this thing,
+With prayer and most high wonder hadst thou gone
+To adore this God whom now thou rail'st upon!
+
+Howbeit, the kine-wardens and shepherds straight
+Came to one place, amazed, and held debate;
+And one being there who walked the streets and scanned
+The ways of speech, took lead of them whose hand
+Knew but the slow soil and the solemn hill,
+And flattering spoke, and asked: "Is it your will,
+Masters, we stay the mother of the King,
+Agâvê, from her lawless worshipping,
+And win us royal thanks?" And this seemed good
+To all; and through the branching underwood
+We hid us, cowering in the leaves. And there
+Through the appointed hour they made their prayer
+And worship of the Wand, with one accord
+Of heart and cry--"Iacchos, Bromios, Lord,
+God of God born!" And all the mountain felt,
+And worshipped with them; and the wild things knelt
+And ramped and gloried, and the wilderness
+Was filled with moving voices and dim stress.
+
+Soon, as it chanced, beside my thicket-close
+The Queen herself passed dancing, and I rose
+And sprang to seize her. But she turned her face
+Upon me: "Ho, my rovers of the chase,
+My wild White Hounds, we are hunted! Up, each rod
+And follow, follow, for our Lord and God!"
+Thereat, for fear they tear us, all we fled
+Amazed; and on, with hand unweaponèd
+They swept toward our herds that browsed the green
+Hill grass. Great uddered kine then hadst thou seen
+Bellowing in sword-like hands that cleave and tear,
+A live steer riven asunder, and the air
+Tossed with rent ribs or limbs of cloven tread,
+And flesh upon the branches, and a red
+Rain from the deep green pines. Yea, bulls of pride,
+Horns swift to rage, were fronted and aside
+Flung stumbling, by those multitudinous hands
+Dragged pitilessly. And swifter were the bands
+Of garbèd flesh and bone unbound withal
+Than on thy royal eyes the lids may fall.
+
+Then on like birds, by their own speed upborne,
+They swept toward the plains of waving corn
+That lie beside Asopus' banks, and bring
+To Thebes the rich fruit of her harvesting.
+On Hysiae and Erythrae that lie nursed
+Amid Kithaeron's bowering rocks, they burst
+Destroying, as a foeman's army comes.
+They caught up little children from their homes,
+High on their shoulders, babes unheld, that swayed
+And laughed and fell not; all a wreck they made;
+Yea, bronze and iron did shatter, and in play
+Struck hither and thither, yet no wound had they;
+Caught fire from out the hearths, yea, carried hot
+Flames in their tresses and were scorchèd not!
+
+The village folk in wrath took spear and sword,
+And turned upon the Bacchae. Then, dread Lord,
+The wonder was. For spear nor barbèd brand
+Could scathe nor touch the damsels; but the Wand,
+The soft and wreathèd wand their white hands sped,
+Blasted those men and quelled them, and they fled
+Dizzily. Sure some God was in these things!
+
+And the holy women back to those strange springs
+Returned, that God had sent them when the day
+Dawned, on the upper heights; and washed away
+The stain of battle. And those girdling snakes
+Hissed out to lap the waterdrops from cheeks
+And hair and breast.
+
+Therefore I counsel thee,
+O King, receive this Spirit, whoe'er he be,
+To Thebes in glory. Greatness manifold
+Is all about him; and the tale is told
+That this is he who first to man did give
+The grief-assuaging vine. Oh, let him live;
+For if he die, then Love herself is slain,
+And nothing joyous in the world again!`,
       analysis:
         "This famous opening line sets up the novel's central theme of marriage and social status, while also establishing the narrator's ironic voice.",
       workId: workMap.get("Pride and Prejudice"),
@@ -213,8 +362,157 @@ export async function seedSnippets(works: any[]) {
     },
     // More from Mrs Dalloway
     {
-      content:
-        "Did it matter then, she asked herself, walking towards Bond Street, did it matter that she must inevitably cease completely? All this must go on without her; did she resent it; or did it not become consoling to believe that death ended absolutely?",
+      content: `[Enter suddenly and in haste a Messenger from the Mountain.]
+
+MESSENGER:
+Great Pentheus, Lord of all this Theban land,
+I come from high Kithaeron, where the frore
+Snow spangles gleam and cease not evermore...
+
+PENTHEUS:
+And what of import may thy coming bring?
+
+MESSENGER:
+I have seen the Wild White Women there, O King,
+Whose fleet limbs darted arrow-like but now
+From Thebes away, and come to tell thee how
+They work strange deeds and passing marvel. Yet
+I first would learn thy pleasure. Shall I set
+My whole tale forth, or veil the stranger part?
+Yea, Lord, I fear the swiftness of thy heart,
+Thine edged wrath and more than royal soul.
+
+PENTHEUS:
+Thy tale shall nothing scathe thee. Tell the whole.
+It skills not to be wroth with honesty.
+Nay, if thy news of them be dark, 'tis he
+Shall pay it, who bewitched and led them on.
+
+MESSENGER:
+Our herded kine were moving in the dawn
+Up to the peaks, the greyest, coldest time,
+When the first rays steal earthward, and the rime
+Yields, when I saw three bands of them. The one
+Autonoë led, one Ino, one thine own
+Mother, Agâvê. There beneath the trees
+Sleeping they lay, like wild things flung at ease
+In the forest; one half sinking on a bed
+Of deep pine greenery; one with careless head
+Amid the fallen oak leaves; all most cold
+In purity--not as thy tale was told
+Of wine-cups and wild music and the chase
+For love amid the forest's loneliness.
+
+Then rose the Queen Agâvê suddenly
+Amid her band, and gave the God's wild cry,
+"Awake, ye Bacchanals! I hear the sound
+Of hornèd kine. Awake ye!" Then, all round,
+Alert, the warm sleep fallen from their eyes,
+A marvel of swift ranks I saw them rise,
+Dames young and old, and gentle maids unwed
+Among them. O'er their shoulders first they shed
+Their tresses, and caught up the fallen fold
+Of mantles where some clasp had loosened hold,
+And girt the dappled fawn-skins in with long
+Quick snakes that hissed and writhed with quivering tongue.
+
+And one a young fawn held, and one a wild
+Wolf cub, and fed them with white milk, and smiled
+In love, young mothers with a mother's breast
+And babes at home forgotten! Then they pressed
+Wreathed ivy round their brows, and oaken sprays
+And flowering bryony. And one would raise
+Her wand and smite the rock, and straight a jet
+Of quick bright water came. Another set
+Her thyrsus in the bosomed earth, and there
+Was red wine that the God sent up to her,
+A darkling fountain. And if any lips
+Sought whiter draughts, with dipping finger-tips
+They pressed the sod, and gushing from the ground
+Came springs of milk. And reed-wands ivy-crowned
+Ran with sweet honey, drop by drop. O King,
+Hadst thou been there, as I, and seen this thing,
+With prayer and most high wonder hadst thou gone
+To adore this God whom now thou rail'st upon!
+
+Howbeit, the kine-wardens and shepherds straight
+Came to one place, amazed, and held debate;
+And one being there who walked the streets and scanned
+The ways of speech, took lead of them whose hand
+Knew but the slow soil and the solemn hill,
+And flattering spoke, and asked: "Is it your will,
+Masters, we stay the mother of the King,
+Agâvê, from her lawless worshipping,
+And win us royal thanks?" And this seemed good
+To all; and through the branching underwood
+We hid us, cowering in the leaves. And there
+Through the appointed hour they made their prayer
+And worship of the Wand, with one accord
+Of heart and cry--"Iacchos, Bromios, Lord,
+God of God born!" And all the mountain felt,
+And worshipped with them; and the wild things knelt
+And ramped and gloried, and the wilderness
+Was filled with moving voices and dim stress.
+
+Soon, as it chanced, beside my thicket-close
+The Queen herself passed dancing, and I rose
+And sprang to seize her. But she turned her face
+Upon me: "Ho, my rovers of the chase,
+My wild White Hounds, we are hunted! Up, each rod
+And follow, follow, for our Lord and God!"
+Thereat, for fear they tear us, all we fled
+Amazed; and on, with hand unweaponèd
+They swept toward our herds that browsed the green
+Hill grass. Great uddered kine then hadst thou seen
+Bellowing in sword-like hands that cleave and tear,
+A live steer riven asunder, and the air
+Tossed with rent ribs or limbs of cloven tread,
+And flesh upon the branches, and a red
+Rain from the deep green pines. Yea, bulls of pride,
+Horns swift to rage, were fronted and aside
+Flung stumbling, by those multitudinous hands
+Dragged pitilessly. And swifter were the bands
+Of garbèd flesh and bone unbound withal
+Than on thy royal eyes the lids may fall.
+
+Then on like birds, by their own speed upborne,
+They swept toward the plains of waving corn
+That lie beside Asopus' banks, and bring
+To Thebes the rich fruit of her harvesting.
+On Hysiae and Erythrae that lie nursed
+Amid Kithaeron's bowering rocks, they burst
+Destroying, as a foeman's army comes.
+They caught up little children from their homes,
+High on their shoulders, babes unheld, that swayed
+And laughed and fell not; all a wreck they made;
+Yea, bronze and iron did shatter, and in play
+Struck hither and thither, yet no wound had they;
+Caught fire from out the hearths, yea, carried hot
+Flames in their tresses and were scorchèd not!
+
+The village folk in wrath took spear and sword,
+And turned upon the Bacchae. Then, dread Lord,
+The wonder was. For spear nor barbèd brand
+Could scathe nor touch the damsels; but the Wand,
+The soft and wreathèd wand their white hands sped,
+Blasted those men and quelled them, and they fled
+Dizzily. Sure some God was in these things!
+
+And the holy women back to those strange springs
+Returned, that God had sent them when the day
+Dawned, on the upper heights; and washed away
+The stain of battle. And those girdling snakes
+Hissed out to lap the waterdrops from cheeks
+And hair and breast.
+
+Therefore I counsel thee,
+O King, receive this Spirit, whoe'er he be,
+To Thebes in glory. Greatness manifold
+Is all about him; and the tale is told
+That this is he who first to man did give
+The grief-assuaging vine. Oh, let him live;
+For if he die, then Love herself is slain,
+And nothing joyous in the world again!`,
       analysis:
         "This passage explores Clarissa's contemplation of mortality and the meaning of existence, central themes in the novel.",
       workId: workMap.get("Mrs Dalloway"),

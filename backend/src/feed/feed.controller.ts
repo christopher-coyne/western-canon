@@ -26,7 +26,6 @@ export class FeedController {
 
   @ApiResponse({
     type: SnippetDto,
-    isArray: true,
   })
   @Get("/")
   async getFeed(@Query() query: GetFeedDto, @Req() request) {

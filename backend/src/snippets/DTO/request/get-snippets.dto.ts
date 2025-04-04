@@ -16,4 +16,11 @@ export class GetSnippetsDto extends PaginationQueryDto {
   @IsOptional()
   @IsString()
   query?: string;
+
+  @ApiPropertyOptional({
+    description: "Filter snippets by genre ID",
+  })
+  @IsOptional()
+  @IsString()
+  genreId?: string;
 }

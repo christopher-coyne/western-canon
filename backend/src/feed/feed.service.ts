@@ -30,37 +30,17 @@ export class FeedService {
       };
     }
 
-    const [items, total] = await Promise.all([
-      this.prismaService.snippet.findMany({
-        where: {
-          OR: [
-            // 3 items less than cursor
-            {
-              order: {
-                lt: query.cursor,
-              },
-            },
-            // The cursor item itself
-            {
-              order: query.cursor,
-            },
-            // 3 items greater than cursor
-            {
-              order: {
-                gt: query.cursor,
-              },
-            },
-          ],
-        },
-        orderBy: {
-          order: "asc",
-        },
-        take: 7, // 3 below + 1 at cursor + 3 above
-        include,
-      }),
-      this.prismaService.snippet.count(),
-    ]);
+    const snippet = await this.prismaService.snippet.findMany({
+      where: {
+        order: query.cursor,
+      },
+      take: 1,
+      include,
+    });
 
-    return items.map((item) => ({ ...item, favorites: item.favorites ?? [] }));
+    return snippet.length > 0
+      ? { ...snippet[0], favorites: snippet[0].favorites ?? [] }
+      : null;
+    // return items.map((item) => ({ ...item, favorites: item.favorites ?? [] }));
   }
 }

@@ -11,6 +11,7 @@
     "start": "nest start",
     "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/main.ts",
     "seed": "prisma migrate reset && ts-node ./prisma/seed.ts",
+    "seed:authors": "prisma migrate reset && ts-node  ./prisma/seed-authors.ts",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",

@@ -1,0 +1,12 @@
+{
+  "id": "6d5030f3-2552-4854-95ab-943347405adb",
+  "name": "homer",
+  "birthYear": -850,
+  "birthYearApprox": true,
+  "deathYear": -750,
+  "deathYearApprox": true,
+  "intro": "Homer is the legendary ancient Greek epic poet, traditionally credited as the author of the foundational works of Western literature, the 'Iliad' and the 'Odyssey'. Though details of his life are obscure and debated, his epic poems, focusing on the Trojan War and Odysseus's journey home, established conventions of narrative, character, and poetic form that profoundly influenced subsequent writers and cultures.",
+  "createdAt": "2025-04-03T21:29:00.102Z",
+  "updatedAt": "2025-04-03T21:29:00.102Z",
+  "deletedAt": null
+}

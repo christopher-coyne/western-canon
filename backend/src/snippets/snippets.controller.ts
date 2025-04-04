@@ -47,6 +47,7 @@ export class SnippetsController {
         query.page,
         query.pageSize,
         query.query,
+        query.genreId,
         userId
       );
     return PaginatedResult.ok(items, total, page, pageSize);

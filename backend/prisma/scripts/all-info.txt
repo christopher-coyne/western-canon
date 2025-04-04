@@ -1,0 +1,185 @@
+Homer
+- iliad, odyssey
+Hesiod
+- theogony
+Pindar
+- odes
+Aeschylus
+- oresteia
+Sophocles
+- Oedipus Rex
+Euripides
+- Bacchae
+Aristophanes
+- The clouds
+Herodotus
+- The Histories
+Thucydides
+- Pelopponesian War
+Aristotle
+- Ethics
+Plato
+- Symposium
+
+Aesop
+- fables
+
+Virgil
+- Aeneid
+Ovid
+- metamorphoses
+
+Augustine
+- city of god
+
+Dante
+- divine comedy
+Boccaccio
+- decameron
+Cervantes
+- don quixote
+Chaucer
+- canterbury tales
+Thomas more
+- utopia
+Chritopher marlowe
+- poems + plays
+William Shakespeare
+- poems + plays
+Thomas Hobbes
+- leviathan
+John Milton
+- paradise lost
+Jonathan Swift
+- Gullivers travels
+Daniel Defoe
+- Robinson Crusoe
+
+
+Victor Hugo
+- les miserables
+Gustave Flaubert
+- Madame Bovary
+Paul Verlaine
+- poems
+Arthur Rimbaud
+- poems
+William Blake
+- poems
+Wordsworth
+- poems
+Jane Austen
+- pride and prejudice
+Samuel Taylor Coleridge
+- albatross
+Lord Byron
+- poems
+Percy Bysshe
+- poems
+mary wollstonecraft
+- frankenstein
+john keats
+- poems
+Charles Dickens
+- great expectations
+tennyson
+- poems
+charlotte bronte
+- jane eyre
+samuel butler
+- erewhon
+oscar wilde
+- plays
+robert louis stevenson
+bram stoker
+- dracula
+
+brothers grimm
+- fairy tales
+nietzsche
+- thus spake zarathustra
+
+Aleksandr pushkin
+gogol
+dostoevsky
+tolstoy
+chekhov
+
+washington irving
+james fenimore cooper
+ralph waldo emerson
+emily dickinson
+walt whitman
+nathaniel hawthorne
+herman melville
+edgar allen poe
+henry david thoreau
+frederick douglass
+longfellow
+ambrose bierce
+stephen crane
+henry james
+mark twain
+william james
+
+garcia lorca
+marcel proust
+jean paul sartre
+albert camus
+eugene ionesco
+
+william butler yeats
+george bernard shaw
+thomas hardy
+rudyard kipling
+joseph conrad
+h g wells
+wilfred owen
+dh lawrence
+virginia woolf
+james joyce
+samuel beckett
+evelyn waugh
+anthony burgess
+aldous huxley
+w h auden
+dylan thomas
+seamus heaney
+tom stoppard
+harold pinter
+george orwell
+
+rilke
+franz kafka
+thomas mann
+hermann hesse
+juan luis borges
+pablo neruda
+gabriel garcia marquez
+
+robert frost
+gertrude stein
+wallace stevens
+sinclair lewis
+william carlos williams
+ezra pound
+ts elliot
+hart crane
+f scott fitzgerald
+william faulkner
+ernest hemingway
+john steinbeck
+james baldwin
+truman capote
+flannery oconnor
+gore vidal
+jd salinger
+norman mailer
+tennessee williams
+arthur miller
+ursual le guin
+cormac mccarthy
+thomas pynchon
+john updike
+kurt vonnegut
+john ashberry

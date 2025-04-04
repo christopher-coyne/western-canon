@@ -3,6 +3,8 @@ import { IsString } from "class-validator";
 
 export class GenreDto {
   @ApiProperty()
-  @IsString()
   name: string;
+
+  @ApiProperty()
+  id: string;
 }

@@ -1,0 +1,5 @@
+export const work = {
+  title: "Symposium",
+  introduction: `"The Symposium," composed by Plato around 385-370 BCE, presents an enchanting philosophical dialogue set during a drinking party in Athens, where distinguished guests—including the comic playwright Aristophanes and the military commander Alcibiades—deliver speeches in praise of Eros, the god of love. The narrative centers on the words of Socrates, who recounts wisdom taught to him by the priestess Diotima, elevating the concept of love from mere physical attraction to a transcendent force that guides the soul toward eternal beauty and truth. The dialogue culminates in Alcibiades' dramatic entrance and candid testimony about his failed attempts to seduce Socrates, revealing the philosopher's extraordinary self-discipline and dedication to wisdom. Through this literary masterpiece, Plato explores the nature of desire, beauty, and knowledge, offering a profound vision of love as the motivating force behind philosophical inquiry and the human ascent toward understanding of the divine.`,
+  publishYear: -385,
+};

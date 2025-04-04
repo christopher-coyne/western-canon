@@ -29,6 +29,11 @@ export class UserProfileDto {
   role: Role;
 
   @ApiProperty({
+    description: "User's cursor",
+  })
+  cursor: number;
+
+  @ApiProperty({
     description: "Number of consecutive days the user has been active",
     example: 5,
   })

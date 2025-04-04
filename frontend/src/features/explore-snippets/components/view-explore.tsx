@@ -67,12 +67,18 @@ export const ViewExplore = () => {
       return api.get(`/genres`).then((response) => response.data);
     },
   });
+  console.log("GENRES ", genres);
 
   const { data: snippets } = useQuery({
     queryKey: ["snippets", debouncedQuery, page, genreFilter],
     queryFn: (): Promise<{ data: PaginatedResponse<ListSnippetDto> }> =>
       api.get(`/snippets`, {
-        params: { page, pageSize: 12, query: debouncedQuery, tags: [] },
+        params: {
+          page,
+          pageSize: 12,
+          query: debouncedQuery,
+          genreId: genreFilter,
+        },
       }),
   });
 
@@ -113,15 +119,23 @@ export const ViewExplore = () => {
               <label className="text-sm font-medium mb-1 block">Genre</label>
               <Select
                 value={genreFilter || ""}
-                onValueChange={(value) => setGenreFilter(value || null)}
+                onValueChange={(value) => {
+                  if (value === "all") {
+                    setGenreFilter(null);
+                  } else {
+                    setGenreFilter(value || null);
+                  }
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="All Genres" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Genres</SelectItem>
+                  <SelectItem value="all" key="all">
+                    All Genres
+                  </SelectItem>
                   {genres?.map((genre) => (
-                    <SelectItem key={genre.name} value={genre.name}>
+                    <SelectItem key={genre.id} value={genre.id}>
                       {genre.name}
                     </SelectItem>
                   ))}
@@ -147,7 +161,7 @@ export const ViewExplore = () => {
           </div>
         )}
       </div>
-      <Pagination className="mt-4">
+      <Pagination className="mt-4 relative">
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious

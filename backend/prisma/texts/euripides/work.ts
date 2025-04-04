@@ -1,0 +1,5 @@
+export const work = {
+  title: "The Bacchae",
+  introduction: `"The Bacchae," one of Euripides' final tragedies performed posthumously around 405 BCE, depicts the violent consequences when divinity is denied and primal human instincts are suppressed. The play centers on Dionysus, god of wine and ecstasy, who returns to his birthplace of Thebes to punish those who reject his divinity—particularly his cousin, the rational king Pentheus. As Dionysus lures the women of Thebes to abandon civilization for ecstatic worship in the mountains, Pentheus attempts to restore order, only to be enticed by the god into spying on the Bacchic rites. The tragedy culminates in horrific violence when Pentheus' own mother, Agave, caught in Dionysian frenzy, tears her son limb from limb, mistaking him for a mountain lion. Through this shocking narrative, Euripides explores the dangerous tension between reason and passion, civilization and nature, skepticism and religious belief, while questioning the nature of divinity itself in one of antiquity's most psychologically complex and disturbing masterpieces.`,
+  publishYear: -405,
+};

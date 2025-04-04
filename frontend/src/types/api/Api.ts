@@ -48,6 +48,8 @@ export interface UserProfileDto {
    * @example "USER"
    */
   role: "USER" | "ADMIN";
+  /** User's cursor */
+  cursor: number;
   /**
    * Number of consecutive days the user has been active
    * @example 5
@@ -97,6 +99,7 @@ export interface AuthorDto {
 
 export interface GenreDto {
   name: string;
+  id: string;
 }
 
 export interface WorkGenreDto {
@@ -539,6 +542,8 @@ export class Api<
         pageSize?: number;
         /** Filter snippets by query */
         query?: string;
+        /** Filter snippets by genre ID */
+        genreId?: string;
       },
       params: RequestParams = {}
     ) =>
@@ -566,7 +571,7 @@ export class Api<
       },
       params: RequestParams = {}
     ) =>
-      this.request<any, SnippetDto[]>({
+      this.request<any, SnippetDto>({
         path: `/feed`,
         method: "GET",
         query: query,
@@ -666,6 +671,22 @@ export class Api<
         path: `/works`,
         method: "GET",
         query: query,
+        ...params,
+      }),
+  };
+  genres = {
+    /**
+     * No description
+     *
+     * @tags genres
+     * @name GenreControllerFindAll
+     * @summary Get all genres
+     * @request GET:/genres
+     */
+    genreControllerFindAll: (params: RequestParams = {}) =>
+      this.request<any, GenreDto[]>({
+        path: `/genres`,
+        method: "GET",
         ...params,
       }),
   };

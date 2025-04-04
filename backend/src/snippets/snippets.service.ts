@@ -3,23 +3,44 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class SnippetsService {
   constructor(private prismaService: PrismaService) {}
 
-  async getSnippets(page = 1, pageSize = 10, query?: string, userId?: string) {
+  async getSnippets(
+    page = 1,
+    pageSize = 10,
+    query?: string,
+    genreId?: string,
+    userId?: string
+  ) {
+    const where: Prisma.SnippetWhereInput = {};
+
+    if (query) {
+      where.content = {
+        contains: query,
+        mode: "insensitive",
+      };
+    }
+
+    if (genreId) {
+      where.work = {
+        genres: {
+          some: {
+            genreId: genreId,
+          },
+        },
+      };
+    }
+
     const [items, total] = await Promise.all([
       this.prismaService.snippet.findMany({
         skip: (page - 1) * pageSize,
         take: pageSize,
-        where: {
-          content: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
+        where,
         include: {
           favorites: {
             where: {
@@ -38,7 +59,7 @@ export class SnippetsService {
           },
         },
       }),
-      this.prismaService.snippet.count(),
+      this.prismaService.snippet.count({ where }),
     ]);
 
     return {

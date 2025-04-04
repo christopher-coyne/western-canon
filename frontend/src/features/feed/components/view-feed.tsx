@@ -6,10 +6,10 @@ import { api } from "@/lib/api-client";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { ListSnippetDto } from "@/types/api/Api";
+import { ListSnippetDto, UserProfileDto } from "@/types/api/Api";
 
 export const ViewFeed = () => {
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isLoading } = useQuery<UserProfileDto>({
     queryKey: ["user"],
   });
 
@@ -21,18 +21,28 @@ export const ViewFeed = () => {
   console.log("returning feed... ", user);
   const cursor = user?.cursor ?? 1;
 
-  return <Feed cursor={cursor} />;
+  return <Feed cursor={cursor} loggedIn={!!user} />;
 };
 
-export const Feed = ({ cursor }: { cursor: number }) => {
+export const Feed = ({
+  cursor,
+  loggedIn,
+}: {
+  cursor: number;
+  loggedIn: boolean;
+}) => {
   console.log("cursor ", cursor);
-  const [mode, setMode] = useState<"analysis" | "content">("analysis");
+  const [mode, setMode] = useState<"analysis" | "content">("content");
   const queryClient = useQueryClient();
 
   const [localCursor, setLocalCursor] = useState<number>(cursor);
 
   const handleCursorChange = (newCursor: number) => {
-    updateCursor(newCursor);
+    if (loggedIn) {
+      updateCursor(newCursor);
+    } else {
+      setLocalCursor(newCursor);
+    }
   };
 
   const { mutate: updateCursor } = useMutation({
@@ -61,7 +71,7 @@ export const Feed = ({ cursor }: { cursor: number }) => {
 
   const { data } = useQuery({
     queryKey: ["feed", localCursor],
-    queryFn: (): Promise<ListSnippetDto[]> => {
+    queryFn: (): Promise<ListSnippetDto> => {
       return api
         .get(`/feed?cursor=${localCursor}`)
         .then((response) => response.data.data);
@@ -72,9 +82,7 @@ export const Feed = ({ cursor }: { cursor: number }) => {
 
   console.log("data ", data);
 
-  const snippetToShow = data
-    ? data.find((item) => item.order === localCursor)
-    : undefined;
+  const snippetToShow = data ? data : undefined;
 
   console.log("data ", data);
 
@@ -84,47 +92,56 @@ export const Feed = ({ cursor }: { cursor: number }) => {
         variant="ghost"
         size="icon"
         className="mr-2 rounded-full bg-primary/10 hover:bg-primary/20 z-10 h-12 w-12"
+        disabled={localCursor === 1}
         onClick={() => handleCursorChange(localCursor - 1)}
       >
         <ChevronLeft className="h-6 w-6" />
       </Button>
-      <div className="rounded-2xl p-6 w-[65%] bg-primary/10 h-[75vh] overflow-y-auto relative">
-        {" "}
-        {snippetToShow ? (
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <div className="text-2xl font-bold">
-                {snippetToShow.work.title}
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-between w-full">
-                  <div className="flex gap-2">
-                    <div>{snippetToShow.work.author.name}</div>
-                    <div>
-                      Published {String(snippetToShow.work.publishYear)}
+      <div className="rounded-2xl p-6 w-[65%] bg-primary/10 h-[75vh] relative">
+        {/* Scrollable content area */}
+        <div className="overflow-y-auto h-[calc(100%-40px)]">
+          <div className="border-red-400 border-2">
+            {snippetToShow ? (
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <div className="text-2xl font-bold">
+                    {snippetToShow.work.title}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between w-full">
+                      <div className="flex gap-2">
+                        <div>{snippetToShow.work.author.name}</div>
+                        <div>
+                          Published {String(snippetToShow.work.publishYear)}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        {snippetToShow.work.genres.map((genre) => (
+                          <Badge variant="outline">{genre.genre.name}</Badge>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    {snippetToShow.work.genres.map((genre) => (
-                      <Badge variant="outline">{genre.genre.name}</Badge>
-                    ))}
-                  </div>
+                  <Separator />
                 </div>
+                {mode === "content" ? (
+                  <div className="whitespace-pre-wrap">
+                    {snippetToShow.content}
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <h2>Analysis</h2>
+                    {snippetToShow.analysis}
+                  </div>
+                )}
               </div>
-              <Separator />
-            </div>
-            {mode === "content" ? (
-              snippetToShow.content
             ) : (
-              <div className="flex flex-col gap-2">
-                <h2>Analysis</h2>
-                {snippetToShow.analysis}
-              </div>
+              "loading..."
             )}
           </div>
-        ) : (
-          "loading..."
-        )}
+        </div>
+
+        {/* Fixed button area */}
         <div className="absolute bottom-4 right-4 flex gap-2">
           <Button
             onClick={() => {
