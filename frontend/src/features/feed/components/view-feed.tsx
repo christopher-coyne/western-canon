@@ -80,8 +80,6 @@ export const Feed = ({
     gcTime: 0,
   });
 
-  console.log("data ", data);
-
   const snippetToShow = data ? data : undefined;
 
   console.log("data ", data);
