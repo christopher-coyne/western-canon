@@ -82,7 +82,7 @@ export const Feed = ({
 
   const snippetToShow = data ? data : undefined;
 
-  console.log("data!! ", data);
+  console.log("data ", data);
 
   return (
     <div className="border-2 border-red-400 flex items-center justify-center">
