@@ -14,3 +14,7 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  my_app_network:
+    name: recommender_network

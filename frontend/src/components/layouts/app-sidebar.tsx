@@ -1,7 +1,7 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
 
 import {
-  SidebarProvider, Sidebar,
+  Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
@@ -11,9 +11,9 @@ import {
   SidebarMenuItem,
   SidebarHeader,
   SidebarFooter,
-} from "@/components/ui/sidebar"
-import { useTheme } from "@/app/theme-provider"
-import { Button } from "../ui/button"
+} from "@/components/ui/sidebar";
+import { useTheme } from "@/app/theme-provider";
+import { Button } from "../ui/button";
 
 const items = [
   {
@@ -41,9 +41,9 @@ const items = [
     url: "#",
     icon: Settings,
   },
-]
+];
 export function AppSidebar() {
-  const { setTheme, theme } = useTheme()
+  const { setTheme, theme } = useTheme();
   return (
     <Sidebar>
       <SidebarHeader className="bg-primary">
@@ -67,11 +67,11 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <Button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>button</Button>
+        <Button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+          button
+        </Button>
       </SidebarContent>
-      <SidebarFooter>
-        footer...
-      </SidebarFooter>
+      <SidebarFooter>footer...</SidebarFooter>
     </Sidebar>
-  )
+  );
 }
