@@ -1,96 +1,8 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
-  - You are about to drop the `Project` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `ProjectFavorite` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Question` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `QuestionFavorite` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Section` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `StudyGuide` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `StudyGuideFavorite` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `TechnologyTag` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `_ProjectToTechnologyTag` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `_StudyGuideToTechnologyTag` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropForeignKey
-ALTER TABLE "Project" DROP CONSTRAINT "Project_creatorId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ProjectFavorite" DROP CONSTRAINT "ProjectFavorite_projectId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ProjectFavorite" DROP CONSTRAINT "ProjectFavorite_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Question" DROP CONSTRAINT "Question_sectionId_fkey";
-
--- DropForeignKey
-ALTER TABLE "QuestionFavorite" DROP CONSTRAINT "QuestionFavorite_questionId_fkey";
-
--- DropForeignKey
-ALTER TABLE "QuestionFavorite" DROP CONSTRAINT "QuestionFavorite_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Section" DROP CONSTRAINT "Section_studyGuideId_fkey";
-
--- DropForeignKey
-ALTER TABLE "StudyGuide" DROP CONSTRAINT "StudyGuide_authorId_fkey";
-
--- DropForeignKey
-ALTER TABLE "StudyGuideFavorite" DROP CONSTRAINT "StudyGuideFavorite_studyGuideId_fkey";
-
--- DropForeignKey
-ALTER TABLE "StudyGuideFavorite" DROP CONSTRAINT "StudyGuideFavorite_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "_ProjectToTechnologyTag" DROP CONSTRAINT "_ProjectToTechnologyTag_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "_ProjectToTechnologyTag" DROP CONSTRAINT "_ProjectToTechnologyTag_B_fkey";
-
--- DropForeignKey
-ALTER TABLE "_StudyGuideToTechnologyTag" DROP CONSTRAINT "_StudyGuideToTechnologyTag_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "_StudyGuideToTechnologyTag" DROP CONSTRAINT "_StudyGuideToTechnologyTag_B_fkey";
-
--- DropTable
-DROP TABLE "Project";
-
--- DropTable
-DROP TABLE "ProjectFavorite";
-
--- DropTable
-DROP TABLE "Question";
-
--- DropTable
-DROP TABLE "QuestionFavorite";
-
--- DropTable
-DROP TABLE "Section";
-
--- DropTable
-DROP TABLE "StudyGuide";
-
--- DropTable
-DROP TABLE "StudyGuideFavorite";
-
--- DropTable
-DROP TABLE "TechnologyTag";
-
--- DropTable
-DROP TABLE "User";
-
--- DropTable
-DROP TABLE "_ProjectToTechnologyTag";
-
--- DropTable
-DROP TABLE "_StudyGuideToTechnologyTag";
-
--- DropEnum
-DROP TYPE "TechnologyType";
+-- CreateEnum
+CREATE TYPE "WorkMedium" AS ENUM ('BOOKS', 'SHORT_STORIES', 'POETRY', 'THEATRE', 'OTHER');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -98,6 +10,7 @@ CREATE TABLE "users" (
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "cursor" INTEGER NOT NULL DEFAULT 0,
     "role" "Role" NOT NULL,
     "dayStreak" INTEGER NOT NULL DEFAULT 0,
     "lastActive" TIMESTAMP(3),
@@ -144,7 +57,10 @@ CREATE TABLE "snippets" (
     "id" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "analysis" TEXT,
+    "citation" TEXT,
+    "subsection" TEXT,
     "workId" TEXT NOT NULL,
+    "order" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),

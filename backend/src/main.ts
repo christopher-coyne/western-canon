@@ -35,7 +35,7 @@ async function bootstrap() {
   app.use(passport.session());
 
   app.enableCors({
-    origin: ["http://localhost:3000", "http://localhost:5173"], // Add your frontend URLs
+    origin: ["http://localhost:3000", process.env.FRONTEND_URL], // Add your frontend URLs
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
