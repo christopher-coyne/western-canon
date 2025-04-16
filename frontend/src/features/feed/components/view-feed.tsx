@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Heart, Info } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart, Info, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
@@ -7,7 +7,8 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { ListSnippetDto, UserProfileDto } from "@/types/api/Api";
-
+import { convertDate } from "@/utils/convert-date";
+import { useAuth } from "@/app/auth-provider";
 export const ViewFeed = () => {
   const { data: user, isLoading } = useQuery<UserProfileDto>({
     queryKey: ["user"],
@@ -45,6 +46,8 @@ export const Feed = ({
     }
   };
 
+  const { openSignIn } = useAuth();
+
   const { mutate: updateCursor } = useMutation({
     mutationFn: (newCursor: number) => {
       console.log("newCursor ", newCursor);
@@ -69,7 +72,11 @@ export const Feed = ({
     },
   });
 
-  const { data } = useQuery({
+  const {
+    data: feed,
+    isLoading: isFeedLoading,
+    isError: isFeedError,
+  } = useQuery({
     queryKey: ["feed", localCursor],
     queryFn: (): Promise<ListSnippetDto> => {
       return api
@@ -80,9 +87,11 @@ export const Feed = ({
     gcTime: 0,
   });
 
-  const snippetToShow = data ? data : undefined;
+  const snippetToShow = feed ? feed : undefined;
 
-  console.log("data ", data);
+  const disabledNextButtons = isFeedLoading || isFeedError || !snippetToShow;
+
+  console.log("data ", feed);
 
   return (
     <div className="border-2 border-red-400 flex items-center justify-center">
@@ -90,16 +99,26 @@ export const Feed = ({
         variant="ghost"
         size="icon"
         className="mr-2 rounded-full bg-primary/10 hover:bg-primary/20 z-10 h-12 w-12"
-        disabled={localCursor === 1}
+        disabled={localCursor === 1 || disabledNextButtons}
         onClick={() => handleCursorChange(localCursor - 1)}
       >
         <ChevronLeft className="h-6 w-6" />
       </Button>
+
       <div className="rounded-2xl p-6 w-[65%] bg-primary/10 h-[75vh] relative">
         {/* Scrollable content area */}
         <div className="overflow-y-auto h-[calc(100%-40px)]">
           <div className="border-red-400 border-2">
-            {snippetToShow ? (
+            {isFeedLoading ? (
+              <div className="h-[25vh] w-full flex justify-center items-center">
+                <Loader2 className="animate-spin" width={48} height={48} />{" "}
+              </div>
+            ) : isFeedError || !snippetToShow ? (
+              <div className="h-[25vh] w-full flex justify-center items-center text-2xl">
+                Sorry, the application is not working now, please try again
+                shortly
+              </div>
+            ) : (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
                   <div className="text-2xl font-bold">
@@ -110,7 +129,13 @@ export const Feed = ({
                       <div className="flex gap-2">
                         <div>{snippetToShow.work.author.name}</div>
                         <div>
-                          Published {String(snippetToShow.work.publishYear)}
+                          Published{" "}
+                          {snippetToShow.work.publishYear
+                            ? convertDate(
+                                Number(snippetToShow.work.publishYear),
+                                null
+                              )
+                            : null}
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -127,14 +152,12 @@ export const Feed = ({
                     {snippetToShow.content}
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 justify-center items-center">
                     <h2>Analysis</h2>
                     {snippetToShow.analysis}
                   </div>
                 )}
               </div>
-            ) : (
-              "loading..."
             )}
           </div>
         </div>
@@ -144,12 +167,15 @@ export const Feed = ({
           <Button
             onClick={() => {
               if (snippetToShow) {
-                toggleFavorite({ id: snippetToShow?.id });
+                if (!loggedIn) {
+                  openSignIn();
+                } else {
+                  toggleFavorite({ id: snippetToShow?.id });
+                }
               }
             }}
             variant="ghost"
             disabled={!snippetToShow}
-            className="rounded-full  h-10 w-10"
           >
             {snippetToShow?.favorites.length ? (
               <Heart className="fill-pink-500 text-pink-500" />
@@ -173,6 +199,7 @@ export const Feed = ({
         size="icon"
         className="ml-2 rounded-full bg-primary/10 hover:bg-primary/20 z-10 h-12 w-12"
         onClick={() => handleCursorChange(localCursor + 1)}
+        disabled={disabledNextButtons}
       >
         <ChevronRight className="h-6 w-6" />
       </Button>

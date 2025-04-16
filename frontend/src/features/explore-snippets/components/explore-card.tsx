@@ -39,7 +39,9 @@ export const ExploreCard = ({ snippet, onClick }: ExploreCardProps) => {
             </div>
           }
 
-          <p className="text-sm text-muted-foreground">{snippet.content}</p>
+          <p className="text-sm text-muted-foreground">
+            {snippet.content.slice(0, 200)}...
+          </p>
         </div>
       </CardContent>
     </Card>
