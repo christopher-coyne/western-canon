@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Filter, Search } from "lucide-react";
+import { Filter, Loader2, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ExploreCard } from "./explore-card";
 import { GenreDto, ListSnippetDto, SnippetDto } from "@/types/api/Api";
@@ -69,7 +69,11 @@ export const ViewExplore = () => {
   });
   console.log("GENRES ", genres);
 
-  const { data: snippets } = useQuery({
+  const {
+    data: snippets,
+    isLoading: isSnippetsLoading,
+    isError: isSnippetsError,
+  } = useQuery({
     queryKey: ["snippets", debouncedQuery, page, genreFilter],
     queryFn: (): Promise<{ data: PaginatedResponse<ListSnippetDto> }> =>
       api.get(`/snippets`, {
@@ -108,9 +112,11 @@ export const ViewExplore = () => {
             Filters
           </Button>
 
-          <span className="text-sm text-muted-foreground">
-            {snippets?.data.pagination.total} results
-          </span>
+          {snippets ? (
+            <span className="text-sm text-muted-foreground">
+              {snippets.data.pagination.total} results
+            </span>
+          ) : null}
         </div>
 
         {showFilters && (
@@ -146,98 +152,111 @@ export const ViewExplore = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {snippets?.data.data.map((snippet) => (
-          <ExploreCard
-            key={snippet.id}
-            snippet={snippet}
-            onClick={() => setSelectedSnippet(snippet)}
-          />
-        ))}
+      {/* Snippets Grid */}
+      {isSnippetsLoading ? (
+        <div className="flex justify-center items-center h-[50vh]">
+          <Loader2 className="animate-spin" width={48} height={48} />
+        </div>
+      ) : isSnippetsError ? (
+        <div className="h-[25vh] w-full flex justify-center items-center text-2xl">
+          Sorry, the application is not working now, please try again shortly
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {snippets?.data.data.map((snippet) => (
+              <ExploreCard
+                key={snippet.id}
+                snippet={snippet}
+                onClick={() => setSelectedSnippet(snippet)}
+              />
+            ))}
 
-        {snippets?.data.data.length === 0 && (
-          <div className="col-span-full text-center py-12 text-muted-foreground">
-            No results found. Try adjusting your search or filters.
+            {snippets?.data.data.length === 0 && (
+              <div className="col-span-full text-center py-12 text-muted-foreground">
+                No results found. Try adjusting your search or filters.
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      <Pagination className="mt-4 relative">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                if (page > 1) setPage(page - 1);
-              }}
-              className={page <= 1 ? "pointer-events-none opacity-50" : ""}
-            />
-          </PaginationItem>
-
-          {page > 1 && (
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setPage(page - 1);
-                }}
-              >
-                {page - 1}
-              </PaginationLink>
-            </PaginationItem>
-          )}
-
-          <PaginationItem>
-            <PaginationLink href="#" isActive>
-              {page}
-            </PaginationLink>
-          </PaginationItem>
-
-          {snippets?.data.pagination &&
-            page < Math.ceil(snippets.data.pagination.total / 12) && (
+          <Pagination className="mt-4 relative">
+            <PaginationContent>
               <PaginationItem>
-                <PaginationLink
+                <PaginationPrevious
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    setPage(page + 1);
+                    if (page > 1) setPage(page - 1);
                   }}
-                >
-                  {page + 1}
+                  className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+
+              {page > 1 && (
+                <PaginationItem>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage(page - 1);
+                    }}
+                  >
+                    {page - 1}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
+
+              <PaginationItem>
+                <PaginationLink href="#" isActive>
+                  {page}
                 </PaginationLink>
               </PaginationItem>
-            )}
 
-          {snippets?.data.pagination &&
-            page + 1 < Math.ceil(snippets.data.pagination.total / 12) && (
+              {snippets?.data.pagination &&
+                page < Math.ceil(snippets.data.pagination.total / 12) && (
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setPage(page + 1);
+                      }}
+                    >
+                      {page + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+
+              {snippets?.data.pagination &&
+                page + 1 < Math.ceil(snippets.data.pagination.total / 12) && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+
               <PaginationItem>
-                <PaginationEllipsis />
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (
+                      snippets?.data.pagination &&
+                      page < Math.ceil(snippets.data.pagination.total / 12)
+                    ) {
+                      setPage(page + 1);
+                    }
+                  }}
+                  className={
+                    snippets?.data.pagination &&
+                    page >= Math.ceil(snippets.data.pagination.total / 12)
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
+                />
               </PaginationItem>
-            )}
-
-          <PaginationItem>
-            <PaginationNext
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                if (
-                  snippets?.data.pagination &&
-                  page < Math.ceil(snippets.data.pagination.total / 12)
-                ) {
-                  setPage(page + 1);
-                }
-              }}
-              className={
-                snippets?.data.pagination &&
-                page >= Math.ceil(snippets.data.pagination.total / 12)
-                  ? "pointer-events-none opacity-50"
-                  : ""
-              }
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+            </PaginationContent>
+          </Pagination>
+        </>
+      )}
 
       {selectedSnippet && (
         <SnippetInfoModal

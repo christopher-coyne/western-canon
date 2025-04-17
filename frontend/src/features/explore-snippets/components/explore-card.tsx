@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ListSnippetDto } from "@/types/api/Api";
+import { convertDate } from "@/utils/convert-date";
 import { Heart } from "lucide-react";
 
 interface ExploreCardProps {
@@ -25,7 +26,7 @@ export const ExploreCard = ({ snippet, onClick }: ExploreCardProps) => {
             </div>
             <p className="text-sm text-muted-foreground">
               {snippet.work.author.name},{" "}
-              {snippet.work.publishYear?.toString() ?? ""}
+              {convertDate(Number(snippet.work.publishYear), null)}
             </p>
           </div>
 
