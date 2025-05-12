@@ -71,6 +71,7 @@ model Work {
   pageCount    Int?
   publishYear  Int?
   authorId     String
+  medium       WorkMedium?
 
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
