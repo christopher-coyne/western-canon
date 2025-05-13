@@ -13,6 +13,7 @@ import { useToggleFavorite } from "../api/favorite-snippets";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { transformItalics } from "@/utils/transform-italics";
 
 interface SnippetInfoModalProps {
   snippet: ListSnippetDto;
@@ -95,9 +96,12 @@ export default function SnippetInfoModal({
                 )}
               </h3>
               {showExcerpt ? (
-                <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground whitespace-pre">
-                  {snippet.content}
-                </blockquote>
+                <blockquote
+                  className="border-l-4 border-primary pl-4 text-muted-foreground whitespace-pre-wrap max-w-3xl break-words"
+                  dangerouslySetInnerHTML={{
+                    __html: transformItalics(snippet.content),
+                  }}
+                />
               ) : null}
             </div>
           )}

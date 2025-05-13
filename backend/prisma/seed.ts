@@ -14,6 +14,7 @@ type SnippetData = {
   id: string;
   title: string;
   content: string;
+  analysis: string;
 };
 
 type WorkData = {
@@ -48,7 +49,7 @@ function readJsonFileSync(filePath: string) {
 }
 
 async function main() {
-  const skipExisting = true;
+  const skipExisting = false;
   const masterData = readJsonFileSync(path.join(__dirname, "master.json"));
   const masterDataTexts = masterData.texts;
   const masterDataGenres = masterData.genres;
@@ -164,6 +165,7 @@ async function main() {
           id: snippet.id,
           content: snippet.content,
           workId: work.id,
+          analysis: snippet.analysis,
         };
 
         if (skipExisting && existingSnippetIds.includes(snippet.id)) {

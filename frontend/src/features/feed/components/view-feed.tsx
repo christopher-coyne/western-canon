@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ListSnippetDto, UserProfileDto } from "@/types/api/Api";
 import { convertDate } from "@/utils/convert-date";
 import { useAuth } from "@/app/auth-provider";
+import { transformItalics } from "@/utils/transform-italics";
 export const ViewFeed = () => {
   const { data: user, isLoading } = useQuery<UserProfileDto>({
     queryKey: ["user"],
@@ -88,6 +89,7 @@ export const Feed = ({
   });
 
   const snippetToShow = feed ? feed : undefined;
+  // const refinedSnippetToShow = snippetToShow?.content.replace('')
 
   const disabledNextButtons = isFeedLoading || isFeedError || !snippetToShow;
 
@@ -148,9 +150,12 @@ export const Feed = ({
                   <Separator />
                 </div>
                 {mode === "content" ? (
-                  <div className="whitespace-pre-wrap">
-                    {snippetToShow.content}
-                  </div>
+                  <div
+                    className="whitespace-pre-wrap"
+                    dangerouslySetInnerHTML={{
+                      __html: transformItalics(snippetToShow.content),
+                    }}
+                  ></div>
                 ) : (
                   <div className="flex flex-col gap-2 justify-center items-center">
                     <h2>Analysis</h2>

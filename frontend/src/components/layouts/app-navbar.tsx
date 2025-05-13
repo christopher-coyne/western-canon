@@ -49,8 +49,8 @@ export function AppNavbar() {
   ];
 
   return (
-    <header className="sticky z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-2 border-red-500 text-lg">
-      <div className="container flex h-14 items-center border-2 border-red-400 m-auto w-[80%]">
+    <header className="sticky z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 top-0 text-lg">
+      <div className="container flex h-14 items-center m-auto w-[80%]">
         <Link to="/" className="mr-6 flex items-center space-x-2">
           <span className="font-bold text-xl">LitSwipe</span>
         </Link>

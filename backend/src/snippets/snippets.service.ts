@@ -20,10 +20,32 @@ export class SnippetsService {
     const where: Prisma.SnippetWhereInput = {};
 
     if (query) {
-      where.content = {
-        contains: query,
-        mode: "insensitive",
-      };
+      where.OR = [
+        {
+          content: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
+        {
+          work: {
+            title: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          work: {
+            author: {
+              name: {
+                contains: query,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+      ];
     }
 
     if (genreId) {
